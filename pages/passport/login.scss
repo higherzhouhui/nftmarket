@@ -1,0 +1,151 @@
+.wrapper {
+	min-height: 100vh;
+	padding: 80px 40px;
+	background-image: url('/static/login/bg.png');
+	color: #fff;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	@media screen and (max-height: 700px) {
+		padding: 20px 30px;
+	}
+}
+.bot-container {
+	display: flex;
+	justify-content: center;
+	gap: 8rpx;
+	font-size: 28rpx;
+	color: rgba(#fff,0.5);
+	span {
+		color: #F061FF;
+	}
+}
+.wrapper-title {
+	text-align: center;
+	font-size: 60rpx;
+	font-weight: bold;
+	line-height: 90rpx;
+	color: #fff;
+}
+.sign-title {
+		font-size: 48rpx;
+		font-weight: bold;
+		margin-bottom: 30px;
+}
+.input-wrapper {
+	margin-top: 80px;
+	@media screen and (max-height: 700px) {
+		margin-top: 40px;
+	}
+}
+.sub-title {
+	font-size: 24rpx;
+	color: #999;
+}
+.cell {
+	margin: 40rpx 0;
+}
+.login-ball {
+	border-bottom-left-radius: 300rpx;
+	height: 400rpx;
+	position: relative;
+}
+/deep/ .u-input__input {
+	height: 100%;
+}
+/deep/ .uni-input-input {
+	color: #fff;
+	letter-spacing: 1rpx;
+	font-size: 32rpx;
+	line-height: 88rpx;
+	padding: 0 20rpx;
+	color: #fff;
+}
+/deep/ .uni-input-placeholder  {
+	letter-spacing: 1rpx;
+	color: #66697A;
+	padding: 0 20rpx;
+	line-height: 88rpx;
+}
+
+	.input-style {
+		margin-top: 30rpx;
+		border: 1px solid #86849A!important;
+		border-radius: 200rpx;
+		height: 88rpx;
+		padding-right: 10px!important;
+		background: #292A41;
+	}
+	.btn {
+		border-radius: 100px;
+		margin-top: 44rpx;
+		height: 80rpx;
+		font-size: 32rpx;
+		line-height: 80rpx;
+		text-align: center;
+		color: #ffffff;
+	}
+	
+.disable {
+		background: linear-gradient(#FF44FF 100%, #8A50FF 100%);
+	}
+
+	.fetch {
+		background: linear-gradient(#FF44FF 100%, #8A50FF 100%);
+	}
+	
+/deep/ .u-form-item--right__content__slot {
+	width: 100%;
+	display: block;
+}
+
+.title {
+	font-size: 48rpx;
+	color: #000;
+	text-align: center;
+}
+.privacy {
+	font-size: 24upx;
+	color: #999;
+	text-align: center;
+	margin-top: 360rpx;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+span {
+	color: $aider-light-color;
+}
+.form {
+	padding: 0 72rpx;
+}
+.divider {
+	margin: 30rpx 0 !important;
+}
+.submit {
+	height: 80rpx;
+	line-height: 80rpx;
+	color: #fff;
+	text-align: center;
+	font-size: 30rpx;
+	border-radius: 100px;
+}
+.logo {
+	margin-top: 20rpx;
+	width: 200rpx;
+	height: 200rpx;
+	text-align: center;
+}
+.logo-cell {
+	text-align: center;
+}
+.text-tips {
+	text-align: center;
+}
+.tips {
+	position: absolute;
+	bottom: 10rpx;
+	width: 100%;
+
+	text-align: center;
+}

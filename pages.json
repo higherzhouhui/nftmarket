@@ -1,0 +1,266 @@
+{
+
+	"easycom": {
+		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [
+
+		{
+			"path": "pages/tabbar/home/index",
+			"style": {
+				"navigationBarTitleText": "%home%",
+				"enablePullDownRefresh": true,
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30"
+
+			}
+		},
+	
+		{
+			"path": "pages/market/market",
+			"style": {
+				"navigationBarTitleText": "%market%", 
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/message/message",
+			"style": {
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30",
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "%messageCenter%"
+			}
+		},
+		{
+			"path": "pages/nftdetail/nftdetail",
+			"style": {
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30",
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "nft"
+			}
+		},
+		{
+			"path": "pages/mynft/mynft",
+			"style": {
+				"navigationBarTitleText": "%mynft%", // 隐藏系统导航栏
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/zichan/zichan",
+			"style": {
+				"navigationBarTitleText": "%assets%",
+				"navigationStyle": "default",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/zichan/deposit/deposit",
+			"style": {
+				"navigationBarTitleText": "%deposit%",
+				"navigationStyle": "default",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path" : "pages/zichan/withdraw/withdraw",
+			"style" : 
+			{
+				"navigationBarTitleText": "%withdraw%",
+				"navigationStyle": "default",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path" : "pages/zichan/withdrawRecord/withdrawRecord",
+			"style" : 
+			{
+				"navigationBarTitleText": "%txjl%",
+				"navigationStyle": "default",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path" : "pages/wode/wode",
+			"style": {
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path" : "pages/wode/invite/invite",
+			"style" : 
+			{
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path" : "pages/wode/submember/submember",
+			"style" : 
+			{
+				"navigationBarTitleText" : "%wdsq%",
+				"navigationStyle": "default",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path" : "pages/wode/email/email",
+			"style" : 
+			{
+				"navigationBarTitleText" : "%wdemail%",
+				"navigationStyle": "default",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30"
+			}
+		},
+		{
+			"path" : "pages/wode/changepwd/changepwd",
+			"style" : 
+			{
+				"navigationBarTitleText" : "%xgmm%",
+				"navigationStyle": "default",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30"
+			}
+		},
+		{
+			"path" : "pages/wode/detail/detail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "%bjzl%",
+				"navigationStyle": "default",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30"
+			}
+		},
+		{
+			"path" : "pages/wode/zhifumm/zhifumm",
+			"style" : 
+			{
+				"navigationBarTitleText" : "%zfmm%",
+				"navigationStyle": "default",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30"
+			}
+		},
+		{
+			"path" : "pages/wode/setting/setting",
+			"style" : 
+			{
+				"navigationBarTitleText" : "%setting%",
+				"navigationStyle": "default",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1e1e30"
+			}
+		}
+	],
+	"subPackages": [
+
+		{
+			"root": "pages/passport",
+			"pages": [{
+					"path": "login",
+					"style": {
+						"navigationBarTitleText": "",
+						"navigationStyle": "custom",
+						"app-plus": {
+							"titleNView": false,
+							"animationType": "slide-in-bottom",
+							"scrollIndicator": "none",
+							"safearea": {
+								"bottom": {
+									"offset": "none"
+								}
+							}
+						}
+					}
+				},
+				{
+					"path": "register/register",
+					"style": {
+						"navigationBarTitleText": "",
+						"navigationStyle": "custom"
+					}
+				}
+			]
+
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "NFT Market",
+		"titleColor": "#303133",
+		"navigationBarBackgroundColor": "#1e1e30",
+		"backgroundColor": "#181818",
+		"color": "#FFFFFF",
+		"app-plus": {
+			// 全局关闭回弹功能
+			"bounce": "none"
+
+		}
+	},
+	"tabBar": {
+		"color": "#ccc",
+		"selectedColor": "#fff",
+		"borderStyle": "black",
+		"backgroundColor": "#292A41",
+		"list": [{
+				"pagePath": "pages/tabbar/home/index",
+				"iconPath": "static/tabbar/shouye.png",
+				"selectedIconPath": "static/tabbar/shouye-1.png",
+				"text": "%home%"
+			},
+			{
+				"pagePath": "pages/market/market",
+				"iconPath": "static/tabbar/shichang.png",
+				"selectedIconPath": "static/tabbar/shichang-1.png",
+				"text": "%market%"
+			},
+			{
+				"pagePath": "pages/mynft/mynft",
+				"iconPath": "static/tabbar/nft.png",
+				"selectedIconPath": "static/tabbar/nft-1.png",
+				"text": "NFT"
+			},
+			{
+				"pagePath": "pages/zichan/zichan",
+				"iconPath": "static/tabbar/zhichan.png",
+				"selectedIconPath": "static/tabbar/zhichan-1.png",
+				"text": "%assets%"
+			},
+			{
+				"pagePath": "pages/wode/wode",
+				"iconPath": "static/tabbar/wode.png",
+				"selectedIconPath": "static/tabbar/wode-1.png",
+				"text": "%mine%"
+			}
+		]
+	},
+	// #todo 为什么要注释condition下代码？ 
+	// IOS plus.runtime.arguments 添加 condition节点后， 框架会修改 runtime.arguments
+	// 会影响什么功能？
+	//    -在h5中唤醒app会一直返回默认值 {"name":"","path":"","query":"","id":0}
+	"condition": { //模式配置，仅开发期间生效   
+		// "current": 0, //当前激活的模式(list 的索引项)
+		// "list": [{
+		// 	"name": "", //模式名称
+		// 	"path":"", //启动页面，必选
+		// 	"query": "" //启动参数，在页面的onLoad函数里面得到
+		// }]
+	}
+}
