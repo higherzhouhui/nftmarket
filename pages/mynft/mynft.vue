@@ -1,50 +1,52 @@
 <template>
 	<view>
 		<view class="header">
-			<text>{{$t('market')}}</text>
+			<text>{{$t('mynft')}}</text>
 			<view @click="routerToMessage">
 				<image src="/static/market/xiaoxi.png" class="message"></image>
-				<view class="hint">4</view>
+				<!-- <view class="hint">4</view> -->
 			</view>
 		</view>
-	<view class="market-container">
-		<view class="market-content">
-		<view class="tabList">
-			<div 
-			class="tabList-item" 
-			v-for="item in tabList" 
-			:key="item.code" 
-			:class="currentTab == item.code && 'tabList-active'"
-			@click="handleChangeTab(item.code)">
-				{{item.name}}
-			</div>
-		</view>
-		<view class="nft-list">
-			<view class="nft-item" v-for="item in list" :key="item.id">
-				<image :src="item.img" class="nft-cover" mode="widthFix"></image>
-				<view class="nft-item-bot">
-					<view class="title">{{item.name}}</view>
-					<view class="price">
-						Price: {{item.price}}  USDT
+		<view class="market-container">
+			<view class="market-content">
+				<view class="tabList">
+					<div class="tabList-item" v-for="item in tabList" :key="item.code"
+						:class="currentTab == item.code && 'tabList-active'" @click="handleChangeTab(item.code)">
+						{{item.name}}
+					</div>
+				</view>
+				<view class="nft-list">
+					<view class="nft-item" v-for="item in list" :key="item.id">
+						<image :src="item.banner || '/static/market/2.png'" class="nft-cover" mode="widthFix"></image>
+						<view class="nft-item-bot">
+							<view class="title">{{item.name}}</view>
+							<view class="price">
+								Price: {{item.total}} USDT
+							</view>
+							<!-- <view class="period">
+								Period: {{item.stake_days}} days
+							</view> -->
+							<view class="buy-btn" @click="routerToDetail(item)">{{item.isZyz ? $t('zhiyaz') : $t('zhiya')}}</view>
+						</view>
 					</view>
-					<view class="period">
-						Period: {{item.period}} days
-					</view>
-					<view class="buy-btn" @click="routerToDetail(item)">{{$t('zhiya')}}</view>
+				</view>
+				<view class="empty" v-if="!list.length && !loading">
+					<image src="/static/empty.png" class="empty-img" mode="widthFix"></image>
+					<view class="desc">{{$t('nodata')}}</view>
 				</view>
 			</view>
 		</view>
-		</view>
-	</view>
 	</view>
 </template>
 
 <script>
+	import { getMyNftListReq } from '@/api/goods.js'
 	export default {
 		data() {
 			return {
 				hasNextPage: true,
 				list: [],
+				loading: true,
 				currentTab: 'all',
 				params: {
 					pageNum: 1,
@@ -78,34 +80,25 @@
 		},
 		//上拉加载触发方法
 		onReachBottom() {
-			if(this.hasNextPage) {    //判断是否还有数据需要加载
-				this.params.pageNum = this.params.pageNum + 1
-				this.getInitData()    //获取数据
-			}
+			
 		},
 		methods: {
-			getInitData() {
+			async getInitData() {
 				uni.showLoading()
-				const _list = [
-					{
-						img: '/static/market/1.png',
-						name: 'Super Infilentcengs',
-						price: '565',
-						period: 5,
-						id: 1,
-					},
-					{
-						img: '/static/market/2.png',
-						name: 'Super Infilentcengs',
-						price: '565',
-						period: 5,
-						id: 2,
-					},
-				]
-				this.list = [...this.list, ..._list]
+				this.loading = true
+				const res = await getMyNftListReq()
+				this.loading = false
+				this.list = res.data.list
+				this.list.map(item => {
+					const data = JSON.parse(item.goods_img)
+					const stake_days = data.stake_days
+					const endTime = new Date(item.created_at)
+					endTime.setDate(endTime.getDate() + stake_days)
+					item.banner = JSON.parse(item.goods_img).banner
+					item.name = JSON.parse(item.goods_img).name
+					item.isZyz = new Date().getTime() < endTime.getTime() ? true : false
+				})
 				uni.stopPullDownRefresh()
-				uni.hideLoading()
-				this.hasNextPage = _list.length == this.params.pageSize ? true : false
 			},
 			//切换tab，逻辑请自行处理
 			handleChangeTab(code) {
@@ -118,7 +111,7 @@
 			},
 			routerToDetail(item) {
 				uni.navigateTo({
-					url: `/pages/nftdetail/nftdetail?id=${item.id}&my=true`,
+					url: `/pages/nftdetail/nftdetail?id=${item.id}&my=true&name=${item.name}`,
 				})
 			}
 		}

@@ -167,6 +167,13 @@
 				"navigationBarTextStyle": "white",
 				"navigationBarBackgroundColor": "#1e1e30"
 			}
+		},
+		{
+			"path" : "pages/zichan/zcDetail/zcDetail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "%zidetail%"
+			}
 		}
 	],
 	"subPackages": [
@@ -191,7 +198,7 @@
 					}
 				},
 				{
-					"path": "register/register",
+					"path": "register",
 					"style": {
 						"navigationBarTitleText": "",
 						"navigationStyle": "custom"

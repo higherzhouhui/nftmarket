@@ -1,29 +1,24 @@
 <template>
 	<view class="zichan-container">
-		<view class="tixian-record">
-			<view class="left">{{$t('time')}}</view>
-			<view class="right">
-				<picker mode="date" :value="month" start="1920-01" end="2100-12" fields="month"
-					@change="bindDateChange">
-					<view>{{month}}</view>
-				</picker>
-				<image src="/static/index/xiala.png" mode="widthFix" class="xiala"></image>
+		<picker mode="selector" :range="reasonList" @change="onChangeReason" range-key="label">
+			<view class="custom-picker">
+				<view class="cp-left">{{$t('type')}}</view>
+				<view class="cp-right">
+					{{label}}
+					<image src="/static/index/xiala.png" class="renzheng" mode="widthFix" />
+				</view>
 			</view>
-		</view>
+		</picker>
 		<view class="record-list" v-for="(item, index) in recordList" :key="index">
 			<view class="top">
-				<view class="left">
-					<view class="left-title">{{item.title}}</view>
-					<view class="left-address" @click="handleCopy($event, item.address)">
-						{{item.address}}
-					</view>
-				</view>
-				<view class="right">{{item.extraction_amount}}</view>
+				<view class="left" v-if="lang == 'en'">{{item.reason_text_en}}</view>
+				<view class="left" v-else>{{item.reason_text}}</view>
+				<view class="right">{{item.money}}</view>
 			</view>
 			<view class="bot">
 				<view class="left">{{item.time}}</view>
-				<view class="right" :class="`status${item.status}`">
-					{{item.status == 1 ? $t('success') : item.status == 2 ? $t('fail') : $t('shenhz')}}
+				<view class="right">
+					<text>{{$t('blance')}}:&nbsp;</text>{{item.after}}
 				</view>
 			</view>
 		</view>
@@ -35,37 +30,71 @@
 </template>
 
 <script>
-	import {
-		getWithDrawListReq
-	} from '@/api/user.js'
 	import moment from 'moment'
-	import thorui from "@/components/thorui/components/common/tui-clipboard/tui-clipboard.js"
-	
+import {
+		getWalletLogReq
+	} from '@/api/user.js'
 	export default {
 		data() {
 			return {
-				month: '2024-08',
+				reason: 0,
+				label: this.$i18n.t('all'),
 				hasNextPage: true,
+				lang: uni.getLocale(),
 				params: {
 					pageNum: 1,
 					pageSize: 10
 				},
+				reasonList: [{
+						label: this.$i18n.t('all'),
+						code: 0
+					},
+					{
+						label: this.$i18n.t('chognzhi'),
+						code: 1
+					},
+					{
+						label: this.$i18n.t('xtchognzhi'),
+						code: 2
+					},
+					{
+						label: this.$i18n.t('shouyi'),
+						code: 3
+					},
+					{
+						label: this.$i18n.t('txbh'),
+						code: 4
+					},
+					{
+						label: this.$i18n.t('txshibai'),
+						code: 5
+					},
+
+					{
+						label: this.$i18n.t('withdraw'),
+						code: -1
+					},
+					{
+						label: this.$i18n.t('buyNft'),
+						code: -2
+					},
+				],
 				recordList: [{
-						title: '',
+						title: '提现USDT(TRC-20)',
 						type: 'withdraw',
 						time: '2024-08-12 12:00:00',
 						status: 'success',
 						amount: 300.13,
 					},
 					{
-						title: '',
+						title: '提现USDT(TRC-20)',
 						type: 'withdraw',
 						time: '2024-08-12 12:00:00',
 						status: 'error',
 						amount: 300.13,
 					},
 					{
-						title: '',
+						title: '提现USDT(TRC-20)',
 						type: 'withdraw',
 						time: '2024-08-12 12:00:00',
 						status: 'loading',
@@ -84,75 +113,39 @@
 				this.initGetData()
 			}
 		},
-		onLoad() {
-			this.initDate()
-		},
+	
 		onShow() {
 			this.initGetData()
 		},
 		methods: {
 			async initGetData() {
 				uni.showLoading()
-				const res = await getWithDrawListReq({
+				const res = await getWalletLogReq({
 					page: this.params.pageNum,
 					page_size: this.params.pageSize,
-					month: this.month
+					reason: this.reason
 				})
-
 				if (res.code == 0) {
 					const list = res.data.list
+					list.map(item => {
+						item.time = moment(item.created_at).format('YYYY-MM-DD HH:mm')
+					})
 					if (this.params.pageNum == 1) {
 						this.recordList = list
 					} else {
 						this.recordList = [...this.recordList, ...list]
 					}
-					this.recordList.map(item => {
-						const title = this.$i18n.t('withdraw') + ' USDT'
-						const title1 = item.chain == 1 ? ' (BEP-20)' : ' (TRC-20)'
-						item.title = title + title1
-						item.time = moment(item.created_at).format('YYYY-MM-DD HH:mm')
-					})
 					this.hasNextPage = list.length == this.params.pageSize
 				}
 				uni.stopPullDownRefresh()
 			},
-			bindDateChange(e) {
-				this.month = e.detail.value
-			},
-			initDate(time) {
-				const date = new Date()
-				const yesr = date.getFullYear()
-				let month = date.getMonth() + 1
-				if (month < 10) {
-					month = `0${month}`
-				}
-				const str = `${yesr}-${month}`
-				this.month = str
-			},
-			show(e) {
 
-				this.dateTimePicker = true
-				return
-				console.log(this.$refs.dateTime)
-				this.$refs.dateTime && this.$refs.dateTime.show();
-			},
-			change(e) {
+			onChangeReason(e) {
 				//选择的结果
-				this.month = e.month;
-			},
-			handleCopy(event, item) {
-				thorui.getClipboardData(item, (res) => {
-					if (res) {
-						//复制成功
-						uni.showToast({
-							title: this.$i18n.t('copied'),
-							icon: 'none'
-						})
-					} else {
-						//复制失败
-						console.log('复制失败')
-					}
-				}, event)
+				const index = e.detail.value;
+				this.reason = this.reasonList[index].code
+				this.label = this.reasonList[index].label
+				this.initGetData()
 			}
 		}
 	}
@@ -196,13 +189,6 @@
 		color: #fff;
 		margin-top: 10px;
 
-		.left-address {
-			word-break: break-all;
-			opacity: 0.8;
-			font-size: 13px;
-			margin-top: 2px;
-		}
-
 		.top {
 			display: flex;
 			align-items: center;
@@ -222,14 +208,14 @@
 			font-size: 12px;
 		}
 
-		.status1 {
+		.success {
 			background: rgb(54, 73, 94);
 			padding: 2px 8px;
 			border-radius: 4px;
 			color: #68C6D2;
 		}
 
-		.status2 {
+		.error {
 			background: rgb(84, 49, 67);
 			padding: 2px 8px;
 			border-radius: 4px;
@@ -241,6 +227,22 @@
 			padding: 2px 8px;
 			border-radius: 4px;
 			color: #64ABFF;
+		}
+	}
+
+	.custom-picker {
+		width: 100%;
+		color: #fff;
+		display: flex;
+		padding: 6px 12px;
+		justify-content: space-between;
+		.cp-right {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+		.renzheng {
+			width: 22px;
 		}
 	}
 </style>

@@ -42,22 +42,23 @@
 
 <script>
 	import popPasswordVue from '@/components/pop-password.vue'
+	import { withDrawReq } from '@/api/user.js'
+import storage from '@/utils/storage'
 	export default {
 		data() {
 			return {
+				userInfo: storage.getUserInfo(),
 				address: '',
 				amount: '',
-				chain: 'trc-20',
-				maxValue: 100,
+				chain: 'TRON',
+				maxValue: Number(storage.getUserInfo().balance),
 				chainList: [{
 						label: this.$i18n.t('bcl'),
-						code: 'trc-20',
-						address: 'TRC20TRC20TRC20'
+						code: 'TRON',
 					},
 					{
 						label: this.$i18n.t('binance'),
-						code: 'bep-20',
-						address: 'BEP20BEP20BEP20'
+						code: 'BSC',
 					}
 				]
 			}
@@ -66,8 +67,21 @@
 			popPasswordVue
 		},
 		methods: {
-			handleConfirm() {
-				console.log('next')
+			async handleConfirm(password) {
+				uni.showLoading()
+				const data = {
+					chain: this.chain == 'BSC' ? 1 : 2,
+					address: this.address,
+					amount: this.amount,
+					password
+				}
+				const res = await withDrawReq(data)
+				if (res.code == 0) {
+					uni.showToast({
+						title: this.$i18n.t('txcg'),
+						icon: 'none'
+					})
+				}
 			},
 			open() {
 				if (!this.address) {
@@ -77,20 +91,20 @@
 					})
 					return
 				}
-				if (!parseInt(this.amount)) {
-					uni.showToast({
-						title: this.$i18n.t('qsrtxje'),
-						icon: 'none'
-					})
-					return
-				}
+				// if (!parseInt(this.amount)) {
+				// 	uni.showToast({
+				// 		title: this.$i18n.t('qsrtxje'),
+				// 		icon: 'none'
+				// 	})
+				// 	return
+				// }
 				this.$refs.popPassword.open()
 			},
 			initData() {
 
 			},
 			zuida() {
-				this.amount = 10
+				this.amount = this.maxValue
 			},
 			onInput(value) {
 				const val = parseInt(value)

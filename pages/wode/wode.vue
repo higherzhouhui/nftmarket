@@ -7,11 +7,11 @@
 		<view class="header" @click="navigateTo({link: '/pages/wode/detail/detail'})">
 			<view class="header-wode">{{$t('mine')}}</view>
 			<view class="head-1">
-				<image :src="userImage"></image>
+				<image :src="userInfo.avatar || userImage"></image>
 			</view>
 			<view class="head-2">
-				Make jason
-				<image src="/static/wode/lv.png" mode="widthFix" class="lv-img"></image>
+				{{userInfo.username}}
+				<span>Lv{{userInfo.level}}</span>
 			</view>
 		</view>
 		<!-- 积分，优惠券，关注， -->
@@ -44,8 +44,14 @@
 	</view>
 </template>
 <script>
+	import storage from "@/utils/storage";
+	import {
+		logoutReq
+	} from '@/api/login.js'
 	import tuiModal from "@/components/thorui/components/thorui/tui-modal/tui-modal.vue"
-
+	import {
+		getUserInfoReq
+	} from '@/api/user.js'
 	import configs from '@/config/config'
 	export default {
 		components: {
@@ -54,17 +60,18 @@
 		data() {
 			return {
 				buttons: [{
-						text: "Cancel",
+						text: this.$i18n.t('cancel'),
 						type: "red",
 						plain: true
 					},
 					{
-						text: "Confirm",
+						text: this.$i18n.t('queren'),
 						type: "red",
 						plain: false
 					}
 				],
 				modal: false,
+				userInfo: storage.getUserInfo(),
 				userImage: configs.defaultUserPhoto,
 				list: [{
 						icon: 'youxiang',
@@ -101,10 +108,23 @@
 		},
 		onLoad() {},
 		onShow() {
-
+			this.initData()
+		},
+		onPullDownRefresh() {
+			this.initData()
 		},
 		mounted() {},
 		methods: {
+			initData() {
+				uni.showLoading()
+				getUserInfoReq().then(res => {
+					if (res.code == 0) {
+						storage.setUserInfo(res.data)
+						this.userInfo = res.data
+					}
+				})
+				uni.stopPullDownRefresh()
+			},
 			//调用此方法显示组件
 			showModal() {
 				this.modal = true;
@@ -119,9 +139,17 @@
 					// this.tui.toast('你点击了取消按钮');
 				} else {
 					// this.tui.toast('你点击了确定按钮');
-					uni.navigateTo({
-						url: '/pages/passport/login'
+					uni.showLoading()
+					logoutReq().then(res => {
+						if (res.code == 0) {
+							storage.setAccessToken('')
+							storage.setUserInfo({})
+							uni.navigateTo({
+								url: '/pages/passport/login'
+							})
+						}
 					})
+
 				}
 				this.hideModal();
 			},
@@ -199,6 +227,13 @@
 
 				.lv-img {
 					width: 30px;
+				}
+
+				span {
+					background: #998433;
+					border-radius: 4px;
+					padding: 2px 4px;
+					font-size: 12px;
 				}
 			}
 

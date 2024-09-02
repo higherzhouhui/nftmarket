@@ -1,17 +1,17 @@
 <template>
 	<view class="wrapper">
 		<view class="top-container">
-			<view v-for="item in topList" :key="item.title" class="top-item">
+			<view v-for="item in topList" :key="item.name" class="top-item">
 				<view class="img-wrapper">
-					<image :src="item.img" alt="logo" class="item-cover" mode="widthFix" />
+					<image :src="item.logo" alt="logo" class="item-cover" mode="widthFix" />
 				</view>
 				<view class="title-price">
 					<view class="title">
-						<span>{{item.title}}</span>
+						<text class="item-name">{{item.name}}</text>
 						<image src="/static/index/renzheng.png" class="renzheng" />
 					</view>
 					<view class="price">
-						Floor: {{item.price}}
+						Floor: {{item.floor_price}}
 					</view>
 				</view>
 			</view>
@@ -47,26 +47,26 @@
 			<view class="collection-right">Volume</view>
 		</view>
 		<view class="collection-list">
-			<view class="collection-item" v-for="(item, index) in list" :key="item.title" @click="routeToDetail">
+			<view class="collection-item" v-for="(item, index) in list" :key="index">
 				<view class="item-left">
 					<text>{{index + 1}}</text>
-					<image :src="item.img" class="collection-img"></image>
+					<image :src="item.logo" class="collection-img"></image>
 					<view class="name-price">
 						<view class="name">
-							<text>{{item.title}}</text>
+							<text>{{item.name}}</text>
 							<image src="/static/index/renzheng.png" class="renzheng"></image>
 						</view>
 						<view class="price">
-							Floor: {{item.price}}
+							Floor: {{item.floor_price}}
 						</view>
 					</view>
 				</view>
 				<view class="item-right">
 					<view class="total-percent">
-						<view class="total">{{item.total}} ETH</view>
-						<view class="percent" :class="item.percent < 0 ? 'lt-zero' : ''">{{item.percent}}%</view>
+						<view class="total">{{item.total}}{{item.price}}</view>
+						<view class="percent" :class="item.ratio < 0 ? 'lt-zero' : ''">{{item.ratio}}%</view>
 					</view>
-					<view class="like-wrapper" @click="handleLike($event, index)">
+					<view class="like-wrapper" @click="handleLike(index)">
 						<image src="/static/index/like.png" class="renzheng" v-if="item.isLike"></image>
 						<image src="/static/index/nlike.png" class="renzheng" v-else></image>
 					</view>
@@ -76,20 +76,14 @@
 	</view>
 </template>
 <script>
+	import storage from '@/utils/storage';
+	import {
+		getNftListReq
+	} from '@/api/user.js'
 	export default {
 		data() {
 			return {
-				topList: [{
-						img: '/static/index/t1.png',
-						title: 'Drameloops',
-						price: '0.2 ETH',
-					},
-					{
-						img: '/static/index/t2.png',
-						title: 'Makemoney',
-						price: '0.3 ETH',
-					},
-				],
+				topList: [{}, {}],
 				selectObj: {
 					tab: 'Trending',
 					time: '24',
@@ -128,7 +122,7 @@
 					},
 				],
 				chainList: [{
-						label: 'All chains',
+						label: 'All Chain',
 						code: 'all'
 					},
 					{
@@ -138,6 +132,10 @@
 					{
 						label: 'BSC',
 						code: 'BSC'
+					},
+					{
+						label: 'TRON',
+						code: 'TRON'
 					},
 				],
 				cateList: [{
@@ -149,61 +147,65 @@
 						code: 'Pepe'
 					},
 					{
-						label: 'Not',
-						code: 'Not'
+						label: 'Egg',
+						code: 'Egg'
 					},
 					{
-						label: 'BTE',
-						code: 'BTE'
+						label: 'Bored',
+						code: 'Bored'
+					},
+					{
+						label: 'Pudgy',
+						code: 'Pudgy'
+					},
+					{
+						label: 'Wrapped',
+						code: 'Wrapped'
 					},
 				],
-				list: [{
-						img: '/static/index/i1.png',
-						title: 'Countrady.io',
-						price: '0.1 MATIC',
-						total: '19ETH',
-						percent: 23,
-						isLike: true,
-					},
-					{
-						img: '/static/index/i2.png',
-						title: 'ANIMA.io',
-						price: '0.4 ETH',
-						total: '9ETH',
-						percent: 83,
-						isLike: true,
-					},
-					{
-						img: '/static/index/i3.png',
-						title: 'TESTAG.io',
-						price: '0.2 ETH',
-						total: '0.9ETH',
-						percent: -233,
-						isLike: true,
-					},
-				]
+				list: [{},{},{}]
 			};
 		},
+		onLoad() {
+
+		},
 		onShow() {
-			uni.showLoading()
-			setTimeout(() => {
-				uni.hideLoading()
-			}, 2000)
+			this.initData()
 		},
 		watch: {
 			selectObj: {
 				handler(val) {
-					console.log(val, 111111)
 					uni.showLoading()
 					setTimeout(() => {
 						uni.hideLoading()
-					}, 2000)
+					}, 100)
 				},
 				deep: true,
 			},
 		},
 
 		methods: {
+			generateRandomNumbers(len) {
+			    let num1, num2;
+			    do {
+			        num1 = Math.floor(Math.random() * len);
+			        num2 = Math.floor(Math.random() * len);
+			    } while (num1 === num2);
+			    return [num1, num2];
+			},
+			async initData() {
+				uni.showLoading()
+				const res = await getNftListReq()
+				if (res.code == 0) {
+					const max = res.data.length
+					const [num1, num2] = this.generateRandomNumbers(max)
+					this.topList = [res.data[num1], res.data[num2]]
+					res.data.map(item => {
+						item.isLike = false
+					})
+					this.list = res.data
+				}
+			},
 			handleFilter(key, value) {
 				this.selectObj[key] = value
 			},
@@ -225,8 +227,7 @@
 			routeToDetail() {
 
 			},
-			handleLike(e, index) {
-				e.stopPropagation()
+			handleLike(index) {
 				this.list[index].isLike = !this.list[index].isLike
 			}
 		},
@@ -235,7 +236,9 @@
 		},
 
 		onPullDownRefresh() {
-
+			setTimeout(() => {
+				uni.stopPullDownRefresh()
+			}, 1000)
 		},
 
 	};
@@ -271,7 +274,9 @@
 				padding: 14rpx 22rpx;
 				color: #fff;
 			}
-
+			.item-name {
+				word-break: break-all;
+			}
 			.title {
 				display: flex;
 				align-items: center;
@@ -330,6 +335,8 @@
 	.renzheng {
 		width: 40rpx;
 		height: 40rpx;
+		min-width: 40rpx;
+		min-height: 40rpx;
 	}
 
 	.collection-list {
@@ -349,12 +356,14 @@
 			.collection-img {
 				width: 96rpx;
 				height: 96rpx;
+				border-radius: 50%;
 			}
 
 			.item-left {
 				display: flex;
 				align-items: center;
 				gap: 12rpx;
+				flex: 1;
 			}
 
 			.name-price {
@@ -365,11 +374,12 @@
 					font-size: 32rpx;
 
 					text {
-						max-width: 115px;
+						max-width: 144px;
 						overflow: hidden;
 						text-overflow: ellipsis;
 						word-break: break-all;
 						white-space: nowrap;
+						font-size: 15px;
 					}
 				}
 
@@ -385,7 +395,6 @@
 				align-items: center;
 				gap: 10rpx;
 				min-width: max-content;
-
 				.total-percent {
 					text-align: right;
 				}

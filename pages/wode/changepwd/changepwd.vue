@@ -3,14 +3,14 @@
 		<view class="custom-input">
 			<view class="label">{{$t('dqmm')}}</view>
 			<view class="cunst-input-wrapper">
-				<u-input :placeholder="$t('qsrdqmm')" focus type="password" class="custom-input-style" v-model="oldPwd">
+				<u-input :placeholder="$t('qsrdqmm')" focus type="password" class="custom-input-style" v-model="current_password">
 				</u-input>
 			</view>
 		</view>
 		<view class="custom-input">
 			<view class="label">{{$t('xinmm')}}</view>
 			<view class="cunst-input-wrapper">
-				<u-input :placeholder="$t('qsrxinmm')" type="password" class="custom-input-style" v-model="password">
+				<u-input :placeholder="$t('qsrxinmm')" type="password" class="custom-input-style" v-model="new_password">
 				</u-input>
 			</view>
 		</view>
@@ -26,24 +26,28 @@
 </template>
 
 <script>
+	import {
+		md5
+	} from "@/utils/md5.js";
+	import { changePwdReq } from '@/api/user.js'
 	export default {
 		data() {
 			return {
-				oldPwd: '',
-				password: '',
+				current_password: '',
+				new_password: '',
 				repassword: '',
 			}
 		},
 		methods: {
 			confirm() {
-				if (!this.oldPwd) {
+				if (!this.current_password) {
 					uni.showToast({
 						title: this.$i18n.t('qsrdqmm'),
 						icon: 'none'
 					})
 					return
 				}
-				if (!this.password) {
+				if (!this.new_password) {
 					uni.showToast({
 						title: this.$i18n.t('qsrxinmm'),
 						icon: 'none'
@@ -57,20 +61,35 @@
 					})
 					return
 				}
-				if (this.password.length < 6) {
+				if (this.new_password.length < 6) {
 					uni.showToast({
 						title: this.$i18n.t('mmzslw'),
 						icon: 'none'
 					})
 					return
 				}
-				if (this.password !== this.repassword) {
+				if (this.new_password !== this.repassword) {
 					uni.showToast({
 						title: this.$i18n.t('lcmmbyz'),
 						icon: 'none'
 					})
 					return
 				}
+				uni.showLoading()
+				changePwdReq({
+					current_password: md5(this.current_password),
+					new_password: this.new_password
+				}).then(res => {
+					if (res.code == 0) {
+						uni.showToast({
+							title: this.$i18n.t('xgmmcg'),
+							icon: 'none'
+						})
+						setTimeout(() => {
+							uni.navigateBack()
+						}, 2000)
+					}
+				})
 			}
 		}
 	}

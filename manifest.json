@@ -1,7 +1,7 @@
 {
-    "name" : "NFTMARKET",
+    "name" : "NFT Market",
     "appid" : "__UNI__EF8ADD4",
-    "description" : "NFTMARKET",
+    "description" : "NFT Market, the largest NFT marketplace. is the world's first and largest web3 marketplace for NFTs and crypto collectibles. Browse, create, buy, sell, and auction NFTs using OpenSea today.",
     "versionName" : "1.0.0",
     "versionCode" : 100,
     "transformPx" : false,
@@ -170,7 +170,8 @@
                     "hdpi" : "static/start.png",
                     "xhdpi" : "static/start.png",
                     "xxhdpi" : "static/start.png"
-                }
+                },
+                "useOriginalMsgbox" : false
             }
         }
     },
@@ -210,7 +211,8 @@
     },
     "h5" : {
         "devServer" : {
-            "disableHostCheck" : true
+            "disableHostCheck" : true,
+            "port" : ""
         },
         "router" : {
             "mode" : "history",
@@ -224,8 +226,8 @@
                 "enable" : true
             }
         },
-        "title" : "lilishop",
+        "title" : "NFT Market",
         "template" : ""
     },
-    "locale" : "zh-Hans"
+    "locale" : "en"
 }

@@ -21,14 +21,14 @@
 					</view>
 					<view class="save btn-color" @click="saveQrCode">{{$t('bcpic')}}</view>
 					<view class="text-container">
-						<view class="text-left"><text>{{$t('inviteCode')}}：</text>{{userInfo.inviteCode}}</view>
-						<view class="text-right" @click="handleCopy($event, userInfo.inviteCode)">
+						<view class="text-left"><text>{{$t('inviteCode')}}：</text>{{userInfo.invite_code}}</view>
+						<view class="text-right" @click="handleCopy($event, userInfo.invite_code)">
 							<image src="/static/zichan/fuzhi.png" class="fuzhi"></image>
 						</view>
 					</view>
 					<view class="text-container">
-						<view class="text-left"><text>{{$t('inviteUrl')}}：</text>{{userInfo.href}}</view>
-						<view class="text-right" @click="handleCopy($event, userInfo.href)">
+						<view class="text-left"><text>{{$t('inviteUrl')}}：</text>{{link}}</view>
+						<view class="text-right" @click="handleCopy($event, link)">
 							<image src="/static/zichan/fuzhi.png" class="fuzhi"></image>
 						</view>
 					</view>
@@ -41,7 +41,8 @@
 	</view>
 </template>
 <script>
-	import thorui from "@/components/thorui/components/common/tui-clipboard/tui-clipboard.js"
+	import storage from "@/utils/storage";
+import thorui from "@/components/thorui/components/common/tui-clipboard/tui-clipboard.js"
 	import qrCode from '@/components/thorui/libs/weapp-qrcode.js';
 
 	export default {
@@ -49,16 +50,14 @@
 		data() {
 			return {
 				qrcode_w: uni.upx2px(380),
-				userInfo: {
-					inviteCode: 'faxvefa',
-					href: 'https://www.baidu.com?inviteCode=faxvefa'
-				}
+				userInfo: storage.getUserInfo(),
+				link: `https://app.nftmarket.life/pages/register?invite_code=${storage.getUserInfo().invite_code}`
 			};
 		},
 		onLoad() {},
 		onReady() {
 			new qrCode('trc20', {
-				text: this.userInfo.href,
+				text: this.link,
 				width: this.qrcode_w,
 				height: this.qrcode_w,
 				colorDark: '#333333',
@@ -75,7 +74,6 @@
 		methods: {
 			handleCopy(event, item) {
 				thorui.getClipboardData(item, (res) => {
-					// #ifdef H5 || MP-ALIPAY
 					if (res) {
 						//复制成功
 						console.log('复制成功')
@@ -87,11 +85,12 @@
 						//复制失败
 						console.log('复制失败')
 					}
-					// #endif
 				}, event)
 			},
 			navigateTo() {
-				uni.navigateBack()
+				uni.switchTab({
+					url: '/pages/wode/wode'
+				})
 			},
 			saveQrCode() {
 				// 将画布保存为临时文件
@@ -108,14 +107,14 @@
 				          uni.hideLoading();
 				          uni.showToast({
 				            title: this.$i18n.t('saveSuccess'),
-				            icon: 'success',
+				            icon: 'none',
 				            duration: 2000
 				          });
 				        },
 				        fail: () => {
 				          uni.hideLoading();
 				          uni.showToast({
-				            title: '保存失败',
+				            title: 'Fail',
 				            icon: 'none'
 				          });
 				        }

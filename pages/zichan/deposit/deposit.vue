@@ -13,12 +13,12 @@
 		</view>
 		<view class="qrcode-wrapper">
 			<view class="code-container">
-				<view class="code-border" :style="{zIndex: chain == 'trc-20' ? 10 : -1}">
+				<view class="code-border" :style="{zIndex: chain == 'TRON' ? 10 : -1}">
 					<canvas :style="{ width: qrcode_w + 'px', height: qrcode_w + 'px' }" canvas-id="trc20"
 						id="trc20"></canvas>
 				</view>
 
-				<view class="code-border" :style="{zIndex: chain == 'bep-20' ? 10 : -1}">
+				<view class="code-border" :style="{zIndex: chain == 'BSC' ? 10 : -1}">
 					<canvas :style="{ width: qrcode_w + 'px', height: qrcode_w + 'px' }" canvas-id="bep20"
 						id="bep20"></canvas>
 				</view>
@@ -31,7 +31,7 @@
 					class="copy-img" mode="aspectFill"></image>
 			</view>
 		</view>
-		<view class="hint" v-if="uni.getLocale() == 'zh-Hans'">
+		<view class="hint" v-if="lang == 'zh-Hans'">
 			注意：仅支持{{getSelectLabel(chain)}}资产，其他资产将会永久丢失
 		</view>
 		<view class="hint" v-else>
@@ -47,43 +47,51 @@
 	export default {
 		data() {
 			return {
-				chain: 'trc-20',
+				chain: 'TRON',
 				qrcode_w: uni.upx2px(380),
+				lang: uni.getLocale(),
 				chainList: [{
 						label: this.$i18n.t('bcl'),
-						code: 'trc-20',
-						address: 'TRC20TRC20TRC20'
+						code: 'TRON',
+						address: ''
 					},
 					{
 						label: this.$i18n.t('binance'),
-						code: 'bep-20',
-						address: 'BEP20BEP20BEP20'
+						code: 'BSC',
+						address: ''
 					}
 				]
 			}
 		},
 		onReady() {
 			//需等canvas初始化完成才可执行方法
+			const depositList = getApp().globalData.depositList || []
+			this.chainList.forEach((item) => {
+				depositList.forEach(citem => {
+					if (item.code == citem.code) {
+						item.address = citem.address
+					}
+				})
+			})
 			this.initData()
 		},
+		
 		methods: {
 			initData() {
-				uni.showLoading()
 				new qrCode('trc20', {
-					text: 'TRC20TRC20TRC20',
+					text: this.chainList[0].address,
 					width: this.qrcode_w,
 					height: this.qrcode_w,
 					colorDark: '#333333',
 					colorLight: '#FFFFFF',
 				});
 				new qrCode('bep20', {
-					text: 'BEP20BEP20B',
+					text: this.chainList[1].address,
 					width: this.qrcode_w,
 					height: this.qrcode_w,
 					colorDark: '#333333',
 					colorLight: '#FFFFFF',
 				});
-				uni.hideLoading()
 			},
 			onChangeChain(event) {
 				this.chain = this.chainList[event.detail.value].code
@@ -102,10 +110,8 @@
 			},
 			handleCopy(event, item) {
 				thorui.getClipboardData(item, (res) => {
-					// #ifdef H5 || MP-ALIPAY
 					if (res) {
 						//复制成功
-						console.log('复制成功')
 						uni.showToast({
 							title: this.$i18n.t('copied'),
 							icon: 'none'
@@ -114,7 +120,6 @@
 						//复制失败
 						console.log('复制失败')
 					}
-					// #endif
 				}, event)
 			},
 		}
@@ -165,7 +170,9 @@
 				gap: 4px;
 				margin-top: 20px;
 				opacity: 0.8;
-
+				padding: 0 12px;
+				word-break: break-all;
+				text-align: center;
 				.copy-img {
 					width: 20px;
 					height: 20px;

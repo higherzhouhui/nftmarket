@@ -139,3 +139,28 @@ export function logoffConfirm() {
 		needToken: true,
 	})
 }
+
+export function loginReq(data) {
+	return http.request({
+		url: `${api.nftMarket}/api/auth/login`,
+		method: 'POST',
+		data
+	})
+}
+
+export function registerReq(data) {
+	return http.request({
+		url: `${api.nftMarket}/api/auth/register`,
+		method: 'POST',
+		data
+	})
+}
+
+
+export function logoutReq(data) {
+	return http.request({
+		url: `${api.nftMarket}/api/user/logout`,
+		method: 'POST',
+		data
+	})
+}

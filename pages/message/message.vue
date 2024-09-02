@@ -2,27 +2,34 @@
 	<view class="message-container">
 		<view class="list-item" v-for="item in list" :key="item.title">
 			<view class="left">
-				<image :src="`/static/market/${item.type}.png`" class="icon"></image>
+				<image :src="item.logo" class="icon"></image>
 			</view>
 			<view class="right">
 				<view class="top">
 					<view class="title">{{item.title}}</view>
 					<view class="time">{{item.time}}</view>
 				</view>
-				<view class="desc">{{item.desc}}</view>
+				<view class="desc">{{item.content}}</view>
 			</view>
+		</view>
+		<view class="empty" v-if="!list.length && !loading">
+			<image src="/static/empty.png" class="empty-img" mode="widthFix"></image>
+			<view class="desc">{{$t('nodata')}}</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import { getMessageList } from '@/api/user.js'
+	import moment from 'moment/moment'
 	export default {
 		data() {
 			return {
 				hasNextPage: true,
+				loading: true,
 				params: {
 					pageNum: 1,
-					pageSize: 4
+					pageSize: 15
 				},
 				list: [
 				
@@ -31,7 +38,7 @@
 		},
 		onPullDownRefresh() {
 			this.params.pageNum = 1
-			this.getData()
+			this.getInitData()
 		},
 		//上拉加载触发方法
 		onReachBottom() {
@@ -41,40 +48,36 @@
 			}
 		},
 		onShow() {
-			this.getDate()
+			this.getInitData()
 		},
 		methods: {
-			getDate() {
+			async getInitData() {
 				uni.showLoading()
-				const _list = [
-					{
-						title: '系统公告',
-						desc: '8月14日22:00进行系统维护的通知',
-						type: 'system',
-						time: '08-18 17:56'
-					},
-					{
-						title: '交易提醒',
-						desc: '有新的nft等待付款',
-						type: 'transaction',
-						time: '08-17 17:56'
-					},
-					{
-						title: '活动提醒',
-						desc: '现在开始参与质押NFT赢大奖',
-						type: 'activity',
-						time: '08-14 17:56'
-					},
-					{
-						title: '活动提醒',
-						desc: '现在开始参与质押NFT赢大奖',
-						type: 'activity',
-						time: '08-14 17:56'
-					},
-				]
-				this.list = [...this.list, ..._list]
+				this.loading = true
+				const res = await getMessageList({
+					page: this.params.pageNum,
+					page_size: this.params.pageSize
+				})
+				this.loading = false
+				const _list = res.data.list
+				_list.map(item => {
+					item.logo = '/static/market/system.png'
+					if (item.type == 2) {
+						item.logo = '/static/market/activity.png'
+					}
+					if (item.type == 3) {
+						item.logo = '/static/market/transaction.png'
+					}
+				})
+				_list.map(item => {
+					item.time = moment(item.created_at).format('YYYY-MM-DD HH:mm')
+				})
+				if (this.params.pageNum == 1) {
+					this.list = _list
+				} else {
+					this._list = [...this._list, ..._list]
+				}
 				uni.stopPullDownRefresh()
-				uni.hideLoading()
 				this.hasNextPage = _list.length == this.params.pageSize ? true : false
 			}
 		}
@@ -106,6 +109,7 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
+			gap: 4px;
 			.title {
 				font-weight: bold;
 				font-size: 32rpx;
@@ -113,6 +117,7 @@
 			.time {
 				color: #999DB7;
 				font-size: 26rpx;
+				min-width: fit-content;
 			}
 		}
 		.desc {
@@ -122,7 +127,7 @@
 			text-align: left;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			white-space: nowrap;
+			word-break: break-all;
 		}
 	}
 	.list-item:last-child {

@@ -4,7 +4,7 @@
 			<text>{{$t('market')}}</text>
 			<view @click="routerToMessage">
 				<image src="/static/market/xiaoxi.png" class="message"></image>
-				<view class="hint">4</view>
+				<!-- <view class="hint">4</view> -->
 			</view>
 		</view>
 		<view class="market-container">
@@ -17,18 +17,22 @@
 				</view>
 				<view class="nft-list">
 					<view class="nft-item" v-for="item in list" :key="item.id">
-						<image :src="item.img" class="nft-cover" mode="widthFix"></image>
+						<image :src="item.banner || '/static/market/1.png'" class="nft-cover" mode="widthFix"></image>
 						<view class="nft-item-bot">
 							<view class="title">{{item.name}}</view>
 							<view class="price">
 								Price: {{item.price}} USDT
 							</view>
 							<view class="period">
-								Period: {{item.period}} days
+								Period: {{item.stake_days}} days
 							</view>
 							<view class="buy-btn" @click="routerToDetail(item)">{{$t('buy')}}</view>
 						</view>
 					</view>
+				</view>
+				<view class="empty" v-if="!list.length && !loading">
+					<image src="/static/empty.png" class="empty-img" mode="widthFix"></image>
+					<view class="desc">{{$t('nodata')}}</view>
 				</view>
 			</view>
 		</view>
@@ -36,12 +40,14 @@
 </template>
 
 <script>
+	import { getNftList } from '@/api/goods.js'
 	export default {
 		data() {
 			return {
 				hasNextPage: true,
 				list: [],
 				currentTab: 'all',
+				loading: true,
 				params: {
 					pageNum: 1,
 					pageSize: 4,
@@ -78,41 +84,47 @@
 			}
 		},
 		methods: {
-			getInitData() {
+			async getInitData() {
 				uni.showLoading()
-				const _list = [{
-						img: '/static/market/1.png',
-						name: 'Super Infilentcengs',
-						price: '565',
-						period: 5,
-						id: 1,
-					},
-					{
-						img: '/static/market/2.png',
-						name: 'Super Infilentcengs',
-						price: '565',
-						period: 5,
-						id: 2,
-					},
-					{
-						img: '/static/market/3.png',
-						name: 'Super Infilentcengs',
-						price: '565',
-						period: 5,
-						id: 3,
-					},
-					{
-						img: '/static/market/4.png',
-						name: 'Super Infilentcengs',
-						price: '565',
-						period: 5,
-						id: 4,
-					},
-				]
-				this.list = [...this.list, ..._list]
+				this.loading = true
+				const res = await getNftList()
+				if (res.code == 0) {
+					this.list = res.data
+					// this.hasNextPage = _list.length == this.params.pageSize ? true : false
+				}
 				uni.stopPullDownRefresh()
 				uni.hideLoading()
-				this.hasNextPage = _list.length == this.params.pageSize ? true : false
+				this.loading = true
+				// const _list = [{
+				// 		img: '/static/market/1.png',
+				// 		name: 'Super Infilentcengs',
+				// 		price: '565',
+				// 		period: 5,
+				// 		id: 1,
+				// 	},
+				// 	{
+				// 		img: '/static/market/2.png',
+				// 		name: 'Super Infilentcengs',
+				// 		price: '565',
+				// 		period: 5,
+				// 		id: 2,
+				// 	},
+				// 	{
+				// 		img: '/static/market/3.png',
+				// 		name: 'Super Infilentcengs',
+				// 		price: '565',
+				// 		period: 5,
+				// 		id: 3,
+				// 	},
+				// 	{
+				// 		img: '/static/market/4.png',
+				// 		name: 'Super Infilentcengs',
+				// 		price: '565',
+				// 		period: 5,
+				// 		id: 4,
+				// 	},
+				// ]
+			
 			},
 			//切换tab，逻辑请自行处理
 			handleChangeTab(code) {
@@ -125,7 +137,7 @@
 			},
 			routerToDetail(item) {
 				uni.navigateTo({
-					url: `/pages/nftdetail/nftdetail?id=${item.id}`,
+					url: `/pages/nftdetail/nftdetail?id=${item.id}&name=${item.name}`,
 				})
 			}
 		}

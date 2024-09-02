@@ -18,7 +18,7 @@ let isNavigateTo = false
 
 function cleanStorage() {
 	uni.showToast({
-		title: "你的登录状态已过期，请重新登录",
+		title: 'Login expired',
 		icon: "none",
 		duration: 1500,
 	});
@@ -32,22 +32,9 @@ function cleanStorage() {
 	console.log("清空token");
 	storage.setUuid("");
 	storage.setUserInfo({});
-
-
-	if (!isNavigateTo) {
-		isNavigateTo = true
-		// 防抖处理跳转
-		// #ifdef MP-WEIXIN
-		uni.navigateTo({
-			url: "/pages/passport/wechatMPLogin",
-		});
-		// #endif
-		// #ifndef MP-WEIXIN
-		uni.navigateTo({
-			url: "/pages/passport/login",
-		});
-		//  #endif
-	}
+	uni.navigateTo({
+		url: '/pages/passport/login'
+	})
 }
 
 let http = new Request();
@@ -67,7 +54,8 @@ const createUuid = () => {
 http.setConfig((config) => {
 	createUuid();
 	/* 设置全局配置 */
-	config.baseURL = api.buyer;
+	// config.baseURL = api.buyer;
+	config.baseURL = '';
 	config.header = {
 		...config.header,
 	};
@@ -81,40 +69,12 @@ http.setConfig((config) => {
 http.interceptors.request.use(
 	(config) => {
 		/* 请求之前拦截器。可以使用async await 做异步操作 */
-		let accessToken = storage.getAccessToken();
-		if (accessToken) {
-			/**
-			 * 使用JWT解析
-			 * 小于当前时间将当前token清除
-			 */
-			const decodeJwt = jwt(accessToken);
-			const timing = new Date().getTime() / 1000
-			if (decodeJwt.exp <= timing) {
-				accessToken = ""
-				storage.setAccessToken('')
-			}
-			const nonce = Foundation.randomString(6);
-			const timestamp = parseInt(new Date().getTime() / 1000);
-			const sign = md5(nonce + timestamp + accessToken);
-			const _params = {
-				nonce,
-				timestamp,
-				sign,
-			};
-			let params = config.params || {};
-			params = {
-				...params,
-				..._params
-			};
-
-			config.params = params;
-			config.header.accessToken = accessToken;
-
-
-		}
+		let accessToken = `Bearer ${storage.getAccessToken()}`;
 		createUuid();
 		config.header = {
 			...config.header,
+			'Authorization': accessToken,
+			'Content-Type': 'application/json;charset=UTF-8',
 			uuid: storage.getUuid()
 		};
 		return config;
@@ -133,92 +93,33 @@ let requests = [];
 http.interceptors.response.use(
 	async (response) => {
 		isNavigateTo = false
-		/* 请求之后拦截器。可以使用async await 做异步操作  */
-		// token存在并且token过期
-		// if (isRefreshing && response.statusCode === 403) {
-		//   cleanStorage();
-		//   isRefreshing = false;
-		// }
 		uni.showLoading() ? uni.hideLoading() : ''
 		let token = storage.getAccessToken();
-		if (
-			(token && response.statusCode === 403) ||
-			response.data.status === 403
-		) {
-			if (!isRefreshing) {
-				console.log('旧token', token)
-				isRefreshing = true;
-				storage.setAccessToken('')
-				let oldRefreshToken = storage.getRefreshToken();
-				//调用刷新token的接口
-				return refreshTokenFn(oldRefreshToken)
-					.then((res) => {
-						let {
-							accessToken,
-							refreshToken
-						} = res.data.result;
-						storage.setAccessToken(accessToken);
-						storage.setRefreshToken(refreshToken);
-
-						response.header.accessToken = `${accessToken}`;
-						// token 刷新后将数组的方法重新执行
-						console.log('接口队列', requests, '新token', accessToken)
-						requests.forEach((cb) => cb(accessToken));
-						requests = []; // 重新请求完清空
-						return http.request(response.config);
-					})
-					.catch((err) => {
-						console.log('刷新token报错' + oldRefreshToken, err)
-						cleanStorage();
-						return Promise.reject(err);
-					})
-					.finally(() => {
-						isRefreshing = false;
-					});
-			} else {
-				// 返回未执行 resolve 的 Promise
-				return new Promise((resolve) => {
-					// 用函数形式将 resolve 存入，等待刷新后再执行
-					requests.push((token) => {
-						response.header.accessToken = `${token}`;
-						resolve(http.request(response.config));
-					});
-				});
-			}
-
-			// 如果当前返回没登录
-		} else if (
-			(!token && !storage.getRefreshToken() && response.statusCode === 403) ||
-			response.data.code === 403
-		) {
-			console.log('没有token 以及刷新token 内容', token, storage.getRefreshToken())
-			cleanStorage();
-
-			// 如果当前状态码为正常但是success为不正常时
-		} else if (
-			(response.statusCode == 200 && !response.data.success) ||
-			response.statusCode == 400
-		) {
-			if (response.data.message) {
+		console.log('response:', response)
+		if (response.statusCode == 200) {
+			const data = response.data
+			if (data.code != 0) {
 				uni.showToast({
-					title: response.data.message,
-					icon: "none",
-					duration: 1500,
-					success: function () {
-						store.state.isShowToast = true;
-					},
-					fail: function () {
-						store.state.isShowToast = false;
-					},
-					complete: function () {
-						store.state.isShowToast = false;
-					}
-				});
-			}
+					title: data.message,
+					icon: 'none',
+				})
+			} 
+			return response.data;
+		} else {
+			uni.showToast({
+				title: response.data.message,
+				icon: 'none',
+			})
 		}
-		return response;
+		if (response.statusCode == 401) {
+			cleanStorage()
+			
+		}
+		return response
 	},
 	(error) => {
+		console.log(error)
+		uni.showLoading() ? uni.hideLoading() : ''
 		return error;
 	}
 );

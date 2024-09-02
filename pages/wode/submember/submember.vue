@@ -1,49 +1,74 @@
 <template>
 	<view class="submember-container">
-		<view class="btn-color total-btn">{{$t('totalUser')}}：<text>15145</text></view>
+		<view class="btn-color total-btn">{{$t('totalUser')}}：<text>{{total}}</text></view>
 		<view class="table">
 			<view class="table-header table-content">
 				<view class="name">{{$t('username')}}</view>
+				<view class="per">{{$t('gongxian')}}</view>
 				<view class="time">{{$t('registerTime')}}</view>
 			</view>
 			<view class="table-content" v-for="(item,index) in listData" :key="index">
-				<view class="name">{{item.name}}</view>
+				<view class="name">{{item.username}}</view>
+				<view class="per">{{Number(item.performance).toFixed(2)}}</view>
 				<view class="time">{{item.time}}</view>
 			</view>
+			<view class="empty" v-if="!listData.length">
+				<image src="/static/empty.png" class="empty-img" mode="widthFix"></image>
+				<view class="desc">{{$t('nodata')}}</view>
+			</view>
 		</view>
+		
 	</view>
 </template>
 
 <script>
-	
+	import moment from 'moment/moment'
+import { getMySubMember } from '@/api/user.js'
 	export default {
 		data() {
 			return {
-				
-				listData: [{
-						id: 1,
-						name: '张三',
-						age: '18',
-						time: '2023-05-04 16:55'
-					},
-					{
-						id: 2,
-						name: '李四',
-						age: '16',
-						time: '2023-05-04 16:55'
-					},
-					{
-						id: 3,
-						name: '王小虎',
-						age: '38',
-						time: '2023-05-04 16:55'
-					}
-				]
+				haveNextPage: true,
+				page: 1,
+				page_size: 10,
+				total: 0,
+				listData: []
 			}
 		},
-		
+		onShow() {
+			this.initData()
+		},
+		onReachBottom() {
+			if (this.haveNextPage) {
+				this.page = this.page + 1
+				this.initData()
+			}
+		},
+		onPullDownRefresh() {
+			this.page = 1
+		},
 		methods: {
-			
+			async initData() {
+				uni.showLoading()
+				const res = await getMySubMember({
+					page: this.page,
+					page_size: this.page_size
+				})
+				if (res.code == 0) {
+					this.total = 0
+					const list = res.data.list
+					this.haveNextPage = list.length == this.pageSize ? true : false
+					if (this.page == 1) {
+						this.listData = list
+					} else {
+						this.listData = [...this.listData, ...list]
+					}
+					this.listData.map(item => {
+						item.time = moment(item.created_at).format('YYYY-MM-DD HH:mm')
+						this.total += Number(item.performance)
+					})
+				}
+				uni.stopPullDownRefresh()
+			}
 		}
 	}
 </script>
@@ -81,6 +106,11 @@
 				overflow: hidden;
 				white-space: nowrap;
 				text-overflow: ellipsis;
+				min-width: fit-content;
+			}
+			.per {
+				min-width: fit-content;
+				flex: 0.8;
 			}
 		}
 		.table-content:first-child {

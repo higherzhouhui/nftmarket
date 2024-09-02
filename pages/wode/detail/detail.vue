@@ -9,16 +9,17 @@
 		<view class="custom-input">
 			<view class="label">{{$t('nickName')}}</view>
 			<view class="cunst-input-wrapper">
-				<u-input :placeholder="$t('qsrnickName')" class="custom-input-style" v-model="nickName">
+				<u-input :placeholder="$t('qsrnickName')" class="custom-input-style" v-model="username">
 				</u-input>
 			</view>
 		</view>
-		<view class="custom-input" @click="show">
+	<!-- 	<view class="custom-input">
 			<view class="label">{{$t('birthday')}}</view>
-			<view class="birthday" >
-				{{birthday}}
-			</view>
-		</view>
+			<picker mode="date" :value="birthday" start="1920-01" end="2100-12" 
+				@change="bindDateChange">
+				<view class="birthday">{{birthday}}</view>
+			</picker>
+		</view> -->
 		
 		<view class="btn-color btn" @click="confirm">{{$t('queren')}}</view>
 	</view>
@@ -27,18 +28,23 @@
 <script>
 	import tuiDatetime from "@/components/thorui/components/thorui/tui-datetime/tui-datetime.vue"
 	import configs from '@/config/config'
+	import storage from "@/utils/storage"
+	import { updateAvatarReq, changeUsernameReq } from "@/api/user.js"
 	export default {
 		data() {
 			return {
-				userImage: configs.defaultUserPhoto,
-				nickName: '',
-				birthday: '1994-06-25',
+				userImage: storage.getUserInfo().avatar || configs.defaultUserPhoto,
+				birthday: storage.getUserInfo().birthday || '1980-01-01',
+				username: storage.getUserInfo().username
 			}
 		},
 		components: {
 			tuiDatetime
 		},
 		methods: {
+			bindDateChange(e) {
+				this.birthday = e.detail.value
+			},
 			handleUploadAvatar() {
 				// 获取图片
 				let that = this;
@@ -47,32 +53,39 @@
 				  success(res) {
 					const tempFilePaths = res.tempFilePaths[0];
 					uni.showLoading({
-						title: '上传中...'
+						title: that.$i18n.t('sczhong'),
 					})
 					uni.uploadFile({
-					  url: ``,
+					  url: `https://app.nftmarket.life/common/upload/avatar`,
 					  filePath: tempFilePaths,
 					  name: 'file',
 					  formData: {
 					    'user': 'test'
 					  },
 					  success: function (res) {
-						  const response = JSON.parse((res.data))
 						  uni.hideLoading()
-					    updateAvatarRequest({
-							avatar: response.data,
-							idCard: that.info.idCard,
-							name: that.info.name
+						  const response = JSON.parse((res.data))
+					    updateAvatarReq({
+							avatar: response.data.url_full,		
 						}).then(avatarRes => {
-							if (avatarRes.code === 200) {
-								that.info.avatar = response.data;
-								that.$store.commit('SET_USERINFO', that.info)
+							if (avatarRes.code === 0) {
+								that.userImage = response.data.url_full;
+								storage.setUserInfo(that.info)
+							} else {
+								uni.showToast({
+									title: this.$i18n.t('scshibai'),
+									icon: 'none'
+								})
 							}
 						})
 					  },
 					  fail: function (res) {
 					    console.log('上传失败：', res);
-							uni.hideLoading()
+						uni.hideLoading()
+						uni.showToast({
+							title: this.$i18n.t('scshibai'),
+							icon: 'none'
+						})
 					  }
 					});
 				  }
@@ -87,41 +100,30 @@
 				this.birthday = e.result;
 			},
 			confirm() {
-				if (!this.oldPwd) {
+				if (!this.username) {
 					uni.showToast({
-						title: '请输入当前密码!',
+						title: this.$i18n.t('qtxyhm'),
 						icon: 'none'
 					})
-					return
 				}
-				if (!this.password) {
-					uni.showToast({
-						title: '请输入新密码!',
-						icon: 'none'
-					})
-					return
-				}
-				if (!this.repassword) {
-					uni.showToast({
-						title: '请再次确认新密码!',
-						icon: 'none'
-					})
-					return
-				}
-				if (this.password.length < 6) {
-					uni.showToast({
-						title: '密码至少6位!',
-						icon: 'none'
-					})
-					return
-				}
-				if (this.password !== this.repassword) {
-					uni.showToast({
-						title: '两次密码不一致!',
-						icon: 'none'
-					})
-					return
-				}
+				uni.showLoading()
+				changeUsernameReq({
+					username: this.username,
+					birthday: this.birthday
+				}).then(res => {
+					if (res.code == 0) {
+						uni.showToast({
+							title: this.$i18n.t('xgcg'),
+							icon: 'none'
+						})
+						setTimeout(() => {
+							uni.switchTab({
+								url: '/pages/wode/wode'
+							})
+						}, 1500)
+					}
+				})
+				// 
 			}
 		}
 	}
@@ -152,6 +154,7 @@
 		.avatar {
 			width: 90px;
 			height: 90px;
+			border-radius: 50%;
 		}
 		.bianji {
 			width: 20px;
@@ -164,5 +167,7 @@
 }
 /deep/ .uni-input-input, .input-placeholder {
 	text-align: center;
+	margin-left: 20px;
+	
 }
 </style>
