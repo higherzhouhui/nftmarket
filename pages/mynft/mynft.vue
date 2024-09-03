@@ -84,7 +84,6 @@
 		},
 		methods: {
 			async getInitData() {
-				uni.showLoading()
 				this.loading = true
 				const res = await getMyNftListReq()
 				this.loading = false

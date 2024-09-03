@@ -14,9 +14,9 @@
 			<view class="top">
 				<view class="left">
 					<view class="left-title">{{item.title}}</view>
-					<view class="left-address" @click="handleCopy($event, item.address)">
+				<!-- 	<view class="left-address" @click="handleCopy($event, item.address)">
 						{{item.address}}
-					</view>
+					</view> -->
 				</view>
 				<view class="right">{{item.extraction_amount}}</view>
 			</view>

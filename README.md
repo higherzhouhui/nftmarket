@@ -1,22 +1,4 @@
-## Lilishop B2B2C 商城系统
-
-### 商城介绍
-
-**官网**：https://pickmall.cn
-
-**更多 README**：https://gitee.com/beijing_hongye_huicheng/lilishop/blob/master/README.md
-
-**演示站点**：https://m-b2b2c.pickmall.cn/ 账号：13011111111 验证码：111111
-
-**商城 小程序/公众号/APP**：扫描二维码
-
-![image-20210511171611793](https://static.pickmall.cn/images/h5-qrcode.png)
-
-## lilishop-uniapp如何在本地h5和微信小程序中运行
-https://www.bilibili.com/video/BV17K8EemEh2/
-
-## lilishop-uniapp如何打包h5到服务器
-https://www.bilibili.com/video/BV1CX87exE64/
+## NFT Market市场
 
 ### 快速开始
 
@@ -42,7 +24,7 @@ https://www.bilibili.com/video/BV1CX87exE64/
 1. 克隆项目到本地
 
 ```shell
-git clone https://gitee.com/beijing_hongye_huicheng/lilishop-uniapp.git
+git clone https://github.com/higherzhouhui/nftmarket.git
 ```
 
 2. 从`hbulider`中打开项目
@@ -107,8 +89,8 @@ git clone https://gitee.com/beijing_hongye_huicheng/lilishop-uniapp.git
 在根目录`config`下的`config`设置中配置了一些默认的配置，可以根据自己的需求进行修改
 
 ```
-const name = "lilishop"; //全局商城name
-const schemeName = "lilishop"; //唤醒app需要的schemeName
+const name = "nftmarket"; //全局name
+const schemeName = "nftmarket"; //唤醒app需要的schemeName
 export default {
   name: name,
   schemeLink: `${schemeName}://`, //唤起app地址
@@ -118,7 +100,7 @@ export default {
   aMapKey: "", //在高德中申请Web服务key
   scanAuthNavigation: ["https://m-b2b2c.pickmall.cn/"], //扫码认证跳转域名配置 会根据此处配置的路由进行跳转
   iosAppId: "id1564638363", //AppStore的应用地址id 具体在分享->拷贝链接中查看
-  logo: "https://lilishop-oss.oss-cn-beijing.aliyuncs.com/4c864e133c2944efad1f7282ac8a3b9e.png", //logo地址
+  logo: "https://nftmarket-oss.oss-cn-beijing.aliyuncs.com/4c864e133c2944efad1f7282ac8a3b9e.png", //logo地址
   customerServiceMobile: "13161366885", //客服电话
   customerServiceEmail: "lili@lili.com", //客服邮箱
   imWebSrc: "https://im.pickmall.cn", //IM地址
@@ -197,7 +179,7 @@ downloadFile合法域名
 https://buyer-api.pickmall.cn
 https://common-api.pickmall.cn
 https://im-api.pickmall.cn
-https://lilishop-oss.oss-cn-beijing.aliyuncs.com
+https://nftmarket-oss.oss-cn-beijing.aliyuncs.com
 ```
 
 #### 如何配置API

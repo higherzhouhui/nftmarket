@@ -106,9 +106,10 @@
 				]
 			};
 		},
-		onLoad() {},
-		onShow() {
+		onLoad() {
 			this.initData()
+		},
+		onShow() {
 		},
 		onPullDownRefresh() {
 			this.initData()
@@ -116,7 +117,6 @@
 		mounted() {},
 		methods: {
 			initData() {
-				uni.showLoading()
 				getUserInfoReq().then(res => {
 					if (res.code == 0) {
 						storage.setUserInfo(res.data)

@@ -12,7 +12,7 @@
 				<view class="per">{{Number(item.performance).toFixed(2)}}</view>
 				<view class="time">{{item.time}}</view>
 			</view>
-			<view class="empty" v-if="!listData.length">
+			<view class="empty" v-if="!listData.length && !loading">
 				<image src="/static/empty.png" class="empty-img" mode="widthFix"></image>
 				<view class="desc">{{$t('nodata')}}</view>
 			</view>
@@ -31,7 +31,8 @@ import { getMySubMember } from '@/api/user.js'
 				page: 1,
 				page_size: 10,
 				total: 0,
-				listData: []
+				listData: [],
+				loading: true,
 			}
 		},
 		onShow() {
@@ -49,10 +50,12 @@ import { getMySubMember } from '@/api/user.js'
 		methods: {
 			async initData() {
 				uni.showLoading()
+				this.loading = true
 				const res = await getMySubMember({
 					page: this.page,
 					page_size: this.page_size
 				})
+				this.loading = false
 				if (res.code == 0) {
 					this.total = 0
 					const list = res.data.list

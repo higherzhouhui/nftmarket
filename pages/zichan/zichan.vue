@@ -39,7 +39,7 @@
 			<view class="money">
 				<image src="/static/zichan/yitixian.png" class="money-img"></image>
 				<view class="money-detail">
-					$&nbsp;0
+					$&nbsp;{{userInfo.withdraw_amount || 0}}
 					<view class="money-desc">{{$t('ytx')}}</view>
 				</view>
 			</view>
@@ -55,9 +55,9 @@
 			<view class="top">
 				<view class="left">
 					<view class="left-title">{{item.title}}</view>
-					<view class="left-address" @click="handleCopy($event, item.address)">
+					<!-- <view class="left-address" @click="handleCopy($event, item.address)">
 					{{item.address}}
-					</view>
+					</view> -->
 				</view>
 				<view class="right">{{item.extraction_amount}}</view>
 			</view>
@@ -128,7 +128,7 @@ import moment from 'moment'
 				]
 			}
 		},
-		onShow() {
+		onLoad() {
 			this.initData()
 		},
 		onPullDownRefresh() {

@@ -85,7 +85,6 @@
 		},
 		methods: {
 			async getInitData() {
-				uni.showLoading()
 				this.loading = true
 				const res = await getNftList()
 				if (res.code == 0) {
@@ -93,8 +92,7 @@
 					// this.hasNextPage = _list.length == this.params.pageSize ? true : false
 				}
 				uni.stopPullDownRefresh()
-				uni.hideLoading()
-				this.loading = true
+				this.loading = false
 				// const _list = [{
 				// 		img: '/static/market/1.png',
 				// 		name: 'Super Infilentcengs',

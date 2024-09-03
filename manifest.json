@@ -57,7 +57,7 @@
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ],
                 "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ],
-                "schemes" : "lilishop",
+                "schemes" : "NFT Market",
                 //安卓自添加 权限  应用市场 过度索取权限
                 "permissionExternalStorage" : {
                     "request" : "none",
@@ -80,7 +80,7 @@
                     "NSLocationAlwaysAndWhenInUseUsageDescription" : "位置信息将用于高德地图的效果展示",
                     "NSMicrophoneUsageDescription" : "用户上传视频时需使用音频信息"
                 },
-                "urltypes" : "lilishop",
+                "urltypes" : "NFT Market",
                 "dSYMs" : false
             },
             /* ios打包配置 */
@@ -186,21 +186,17 @@
     "mp-weixin" : {
         /* 小程序特有相关 */
         "usingComponents" : true,
-        "appid" : "wx6f10f29075dc1b0b",
+        "appid" : "",
         "optimization" : {
             "subPackages" : true
         },
         "setting" : {
             "urlCheck" : false,
-            "minified" : true,
+            "minified" : false,
             "postcss" : false,
-            "es6" : true
+            "es6" : false
         },
-        "permission" : {
-            "scope.userLocation" : {
-                "desc" : "位置信息将用于高德地图的效果展示"
-            }
-        },
+        "permission" : {},
         "plugins" : {},
         // 直播插件注释
         // "live-player-plugin" : {

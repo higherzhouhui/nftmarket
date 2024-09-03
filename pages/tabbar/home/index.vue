@@ -84,6 +84,7 @@
 		data() {
 			return {
 				topList: [{}, {}],
+				isLoad: false,
 				selectObj: {
 					tab: 'Trending',
 					time: '24',
@@ -167,21 +168,23 @@
 			};
 		},
 		onLoad() {
-
+			
 		},
 		onShow() {
-			this.initData()
+			if (!this.isLoad) {
+				this.initData()
+			}
 		},
 		watch: {
-			selectObj: {
-				handler(val) {
-					uni.showLoading()
-					setTimeout(() => {
-						uni.hideLoading()
-					}, 100)
-				},
-				deep: true,
-			},
+			// selectObj: {
+			// 	handler(val) {
+			// 		uni.showLoading()
+			// 		setTimeout(() => {
+			// 			uni.hideLoading()
+			// 		}, 100)
+			// 	},
+			// 	deep: true,
+			// },
 		},
 
 		methods: {
@@ -194,7 +197,6 @@
 			    return [num1, num2];
 			},
 			async initData() {
-				uni.showLoading()
 				const res = await getNftListReq()
 				if (res.code == 0) {
 					const max = res.data.length
@@ -204,7 +206,9 @@
 						item.isLike = false
 					})
 					this.list = res.data
+					this.isLoad = true
 				}
+				uni.stopPullDownRefresh()
 			},
 			handleFilter(key, value) {
 				this.selectObj[key] = value
@@ -236,9 +240,7 @@
 		},
 
 		onPullDownRefresh() {
-			setTimeout(() => {
-				uni.stopPullDownRefresh()
-			}, 1000)
+			this.initData()
 		},
 
 	};
