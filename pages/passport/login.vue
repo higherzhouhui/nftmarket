@@ -18,7 +18,7 @@
 				<div class="other-sign-title">{{$t('orsign')}}</div>
 				<div class="icon-list" @click="handleToast">
 					<div v-for="(item, index) in loginList" :key="item.code">
-						<image :src="`/static/login/${item.icon}.png`" alt="logo" class="icon" mode="widthFix"/>
+						<image :src="`/static/login/${item.icon}.png`" alt="logo" class="icon" mode="widthFix" />
 					</div>
 				</div>
 			</div>
@@ -49,9 +49,9 @@
 				codeColor: "#999", //按钮验证码颜色
 				lightColor: this.$lightColor,
 				seconds: 60, //默认验证码等待时间
-				userData: {
-					username: "",
-					password: "",
+				userData: storage.getLoginInfo() || {
+					username: '',
+					password: ''
 				},
 				showBack: false,
 				enableFetchCode: false,
@@ -134,6 +134,10 @@
 					password: md5(this.userData.password),
 				}).then(res => {
 					if (res.code == 0) {
+						storage.setLoginInfo({
+							username: this.userData.username,
+							password: this.userData.password,
+						})
 						storage.setAccessToken(res.data.access_token)
 						storage.setUserInfo(res.data.user)
 						uni.switchTab({

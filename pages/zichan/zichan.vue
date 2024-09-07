@@ -2,7 +2,8 @@
 	<view class="zichan-container">
 		<view class="wallet-balance" @click="handleRouter('/pages/zichan/zcDetail/zcDetail')">
 			<view class="wallet-title">{{$t('dqqbye')}}</view>
-			<view class="balance">$&nbsp;{{Number(userInfo.balance).toFixed(4)}}</view>
+			<view class="balance" v-if="userInfo.balance">$&nbsp;{{Number(userInfo.balance).toFixed(2)}}</view>
+			<view class="balance" v-else>$&nbsp;0</view>
 		</view>
 		<view class="deposit-withdraw">
 			<view class="btn-wrapper" @click="handleRouter('/pages/zichan/deposit/deposit')">

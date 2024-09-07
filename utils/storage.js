@@ -9,6 +9,7 @@ const FACE_LOGIN = isDev ? "face_login_dev" : "face_login";
 const FINGER_LOGIN = isDev ? "finger_login_dev" : "finger_login";
 const CART_BACKBTN = isDev ? "cart_backbtn_dev" : "cart_backbtn";
 const AFTERSALE_DATA = isDev ? "aftersale_data_dev" : "aftersale_data";
+const LOGIN_INFO = isDev ? "afterlogin_info_dev" : "afterlogin_info";
 export default {
   //写入自动发券
   setAutoCp(val){
@@ -29,6 +30,10 @@ export default {
   //写入 展示还是不展示
   setShow(val) {
     uni.setStorageSync("show", val);
+  },
+  //写入 展示还是不展示
+  setLoginInfo(val) {
+    uni.setStorageSync(LOGIN_INFO, val);
   },
   getShow() {
     if (uni.getStorageSync(`show`) === "" || uni.getStorageSync(`show`) === undefined) {
@@ -69,6 +74,9 @@ export default {
   // 写入uuid
   setUuid(val) {
     uni.setStorageSync(UUID, val);
+  },
+  getLoginInfo(){
+	return uni.getStorageSync(LOGIN_INFO)  
   },
   // 获取uuid
   getUuid() {
