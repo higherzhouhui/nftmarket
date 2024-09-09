@@ -45,6 +45,22 @@
 				</view>
 			</view>
 		</view>
+		<view class="money-wrapper">
+			<view class="money">
+				<image src="/static/zichan/gift.png" class="money-img"></image>
+				<view class="money-detail">
+					$&nbsp;{{userInfo.gift_amount || 0}}
+					<view class="money-desc">{{$t('zsje')}}</view>
+				</view>
+			</view>
+			<view class="money">
+				<image src="/static/zichan/shifang.png" class="money-img"></image>
+				<view class="money-detail">
+					$&nbsp;{{userInfo.released_amount || 0}}
+					<view class="money-desc">{{$t('yjsf')}}</view>
+				</view>
+			</view>
+		</view>
 		<view class="tixian-record">
 			<view class="left">{{$t('txjl')}}</view>
 			<view class="right" @click="handleRouter('/pages/zichan/withdrawRecord/withdrawRecord')">
