@@ -22,7 +22,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="empty" v-if="!recordList.length">
+		<view class="empty" v-if="!recordList.length && !loading">
 			<image src="/static/empty.png" class="empty-img" mode="widthFix"></image>
 			<view class="desc">{{$t('nodata')}}</view>
 		</view>
@@ -41,6 +41,7 @@ import {
 				label: this.$i18n.t('all'),
 				hasNextPage: true,
 				lang: uni.getLocale(),
+				loading: true,
 				params: {
 					pageNum: 1,
 					pageSize: 10
@@ -79,28 +80,7 @@ import {
 						code: -2
 					},
 				],
-				recordList: [{
-						title: '提现USDT(TRC-20)',
-						type: 'withdraw',
-						time: '2024-08-12 12:00:00',
-						status: 'success',
-						amount: 300.13,
-					},
-					{
-						title: '提现USDT(TRC-20)',
-						type: 'withdraw',
-						time: '2024-08-12 12:00:00',
-						status: 'error',
-						amount: 300.13,
-					},
-					{
-						title: '提现USDT(TRC-20)',
-						type: 'withdraw',
-						time: '2024-08-12 12:00:00',
-						status: 'loading',
-						amount: 300.13,
-					},
-				],
+				recordList: [],
 			}
 		},
 		onPullDownRefresh() {
@@ -120,11 +100,13 @@ import {
 		methods: {
 			async initGetData() {
 				uni.showLoading()
+				this.loading = true
 				const res = await getWalletLogReq({
 					page: this.params.pageNum,
 					page_size: this.params.pageSize,
 					reason: this.reason
 				})
+				this.loading = false
 				if (res.code == 0) {
 					const list = res.data.list
 					list.map(item => {

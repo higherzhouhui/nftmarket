@@ -27,7 +27,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="empty" v-if="!recordList.length">
+		<view class="empty" v-if="!recordList.length && !loading">
 			<image src="/static/empty.png" class="empty-img" mode="widthFix"></image>
 			<view class="desc">{{$t('nodata')}}</view>
 		</view>
@@ -46,32 +46,12 @@
 			return {
 				month: '2024-08',
 				hasNextPage: true,
+				loading: true,
 				params: {
 					pageNum: 1,
 					pageSize: 10
 				},
-				recordList: [{
-						title: '',
-						type: 'withdraw',
-						time: '2024-08-12 12:00:00',
-						status: 'success',
-						amount: 300.13,
-					},
-					{
-						title: '',
-						type: 'withdraw',
-						time: '2024-08-12 12:00:00',
-						status: 'error',
-						amount: 300.13,
-					},
-					{
-						title: '',
-						type: 'withdraw',
-						time: '2024-08-12 12:00:00',
-						status: 'loading',
-						amount: 300.13,
-					},
-				],
+				recordList: [],
 			}
 		},
 		onPullDownRefresh() {
@@ -93,12 +73,13 @@
 		methods: {
 			async initGetData() {
 				uni.showLoading()
+				this.loading = true
 				const res = await getWithDrawListReq({
 					page: this.params.pageNum,
 					page_size: this.params.pageSize,
 					month: this.month
 				})
-
+				this.loading = false
 				if (res.code == 0) {
 					const list = res.data.list
 					if (this.params.pageNum == 1) {

@@ -51,7 +51,7 @@ import thorui from "@/components/thorui/components/common/tui-clipboard/tui-clip
 			return {
 				qrcode_w: uni.upx2px(380),
 				userInfo: storage.getUserInfo(),
-				link: `https://app.nftmarket.life/pages/register?invite_code=${storage.getUserInfo().invite_code}`
+				link: `https://www.nftmarket.life/pages/register?invite_code=${storage.getUserInfo().invite_code}`
 			};
 		},
 		onLoad() {},

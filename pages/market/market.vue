@@ -24,7 +24,7 @@
 								Price: {{item.price}} USDT
 							</view>
 							<view class="period">
-								Period: {{item.stake_days}} days
+								Period: {{item.stake_days}} Days
 							</view>
 							<view class="buy-btn" @click="routerToDetail(item)">{{$t('buy')}}</view>
 						</view>

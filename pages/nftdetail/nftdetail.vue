@@ -1,9 +1,9 @@
 <template>
 	<view class="detail-container">
 		<view class="img-wrapper">
-			<image :src="detail.banner || '/static/market/4.png'" mode="widthFix" class="cover"></image>
+			<image :src="detail.banner" mode="widthFix" class="cover"></image>
 		</view>
-		<view class="title">NFToker {{detail.name}}</view>
+		<view class="title">NFToker #{{detail.id}}</view>
 		<view class="desc">{{detail.desc}}</view>
 		<view class="list">
 			<view class="list-left">
@@ -12,8 +12,8 @@
 				</view>
 				<view class="list-item">
 					<text class="label">{{$t('zuanqian')}}:</text>
-					<text v-if="!isMy">{{Math.round(detail.income_ratio * detail.price) / 100}}</text>
-					<text v-else>{{detail.income_total}}</text>&nbsp;USDT
+					<text v-if="!isMy">{{Number(detail.income_ratio *100).toFixed(2)}}</text>
+					<text v-else>{{Number(detail.income_ratio *100).toFixed(2)}}</text>&nbsp;%
 				</view>
 				<view class="list-item" v-if="isMy">
 					<text class="label">{{$t('num')}}:</text>
