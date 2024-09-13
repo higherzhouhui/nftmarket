@@ -60,10 +60,10 @@
 		</view> -->
 		<view class="btn-wrapper">
 			<view v-if="isMy">
-				<view class="sysj">{{$t('syzysj')}}</view>
+				<view class="sysj" v-if="isZyz">{{$t('syzysj')}}</view>
 				<view class="buy-btn btn-color" @click="handleBuy">
 					<!-- {{$t('zhiya')}} -->
-					{{countTime}}
+					{{isZyz ? countTime : $t('zhiya')}}
 				</view>
 			</view>
 
@@ -87,6 +87,7 @@
 		data() {
 			return {
 				isMy: false,
+				isZyz: true,
 				formatAddress: formatAddress,
 				timer: '',
 				countTime: 'loading',
@@ -162,7 +163,7 @@
 			},
 			handleBuy() {
 				if (this.isMy) {
-					if (this.countTime == '00: 00: 00') {
+					if (!this.isZyz) {
 						this.$refs.popPassword.open()
 					}
 				} else {
@@ -187,8 +188,13 @@
 			timestampToHHMMSS() {
 				const endTime = new Date(this.detail.created_at)
 				endTime.setDate(endTime.getDate() + this.detail.stake_days)
-
+				
 				let ts = (endTime.getTime() - new Date().getTime()) / 1000
+				if (ts < 0) {
+					this.isZyz = false
+					clearInterval(this.timer)
+					return
+				}
 				var days = Math.floor(ts / (3600 * 24));
 				var hours = Math.floor(ts % (3600 * 24) / 3600);
 				var minutes = Math.floor((ts % 3600) / 60);

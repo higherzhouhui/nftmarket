@@ -15,7 +15,7 @@
 				{{$t('withdraw')}}
 			</view>
 		</view>
-		<view class="address-list">
+		<!-- <view class="address-list">
 			<view v-for="(item, index) in depositList" :key="item.title" class="address-list-item">
 				<view class="address-list-top">
 					<view class="left">
@@ -28,12 +28,12 @@
 				</view>
 				<view class="address-list-bot">{{formatAddress(item.address, 'long')}}</view>
 			</view>
-		</view>
+		</view> -->
 		<view class="money-wrapper">
 			<view class="money">
 				<image src="/static/zichan/zongshouyi.png" class="money-img"></image>
 				<view class="money-detail">
-					$&nbsp;{{userInfo.performance}}
+					$&nbsp;{{userInfo.incomeTotal}}
 					<view class="money-desc">{{$t('totalsy')}}</view>
 				</view>
 			</view>
@@ -145,7 +145,7 @@ import moment from 'moment'
 				]
 			}
 		},
-		onLoad() {
+		onShow() {
 			this.initData()
 		},
 		onPullDownRefresh() {
@@ -162,9 +162,9 @@ import moment from 'moment'
 					}
 				})
 				
-				this.depositList.map((item, index) => {
-					this.handleRefresh(item.code, index)
-				})
+				// this.depositList.map((item, index) => {
+				// 	this.handleRefresh(item.code, index)
+				// })
 				getWithDrawListReq({page: 1, page_size: 3}).then(res => {
 					if (res.code == 0) {
 						this.recordList = res.data.list
@@ -237,7 +237,7 @@ import moment from 'moment'
 		}
 
 		.deposit-withdraw {
-			margin-top: 20px;
+			margin: 20px 0;
 			display: flex;
 			gap: 10px;
 
@@ -301,16 +301,19 @@ import moment from 'moment'
 				background: #292A41;
 				border-radius: 16px;
 				gap: 8px;
-				padding: 8px 0;
+				padding: 8px 0 8px 55px;
 				display: flex;
 				align-items: center;
-				justify-content: center;
 				flex: 1;
 				color: #fff;
-
+				position: relative;
 				.money-img {
+					position: absolute;
 					width: 24px;
 					height: 24px;
+					left: 15px;
+					top: 50%;
+					transform: translate(0, -50%);
 				}
 
 				.money-desc {

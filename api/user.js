@@ -122,3 +122,12 @@ export function getMyNftListReq(params) {
 	})
 }
 
+export function updateRechargeReq() {
+	return http.request({
+		url: `${api.nftMarket}/api/user/update_recharge`,
+		method: 'GET',
+	})
+}
+
+
+

@@ -18,7 +18,7 @@
 			<view class="bot">
 				<view class="left">{{item.time}}</view>
 				<view class="right">
-					<text>{{$t('blance')}}:&nbsp;</text>{{item.after}}
+					<text>{{$t('balance')}}:</text>{{item.after}}
 				</view>
 			</view>
 		</view>
