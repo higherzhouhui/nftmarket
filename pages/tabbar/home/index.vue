@@ -171,6 +171,12 @@
 			
 		},
 		onShow() {
+			if (!storage.getAccessToken()) {
+				uni.navigateTo({
+					url: '/pages/passport/login'
+				})
+				return
+			}
 			if (!this.isLoad) {
 				this.initData()
 			}

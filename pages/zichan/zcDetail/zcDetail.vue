@@ -13,12 +13,12 @@
 			<view class="top">
 				<view class="left" v-if="lang == 'en'">{{item.reason_text_en}}</view>
 				<view class="left" v-else>{{item.reason_text}}</view>
-				<view class="right">{{item.money}}</view>
+				<view class="right">{{Number(item.money).toFixed(2)}}</view>
 			</view>
 			<view class="bot">
 				<view class="left">{{item.time}}</view>
 				<view class="right">
-					<text>{{$t('balance')}}:</text>{{item.after}}
+					<text>{{$t('balance')}}:</text>{{Number(item.after).toFixed(2)}}
 				</view>
 			</view>
 		</view>

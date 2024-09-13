@@ -21,7 +21,7 @@
 						<view class="nft-item-bot">
 							<view class="title">{{item.name}}</view>
 							<view class="price">
-								Price: {{item.total}} USDT
+								Price: {{Number(item.total).toFixed(2)}} USDT
 							</view>
 							<!-- <view class="period">
 								Period: {{item.stake_days}} days

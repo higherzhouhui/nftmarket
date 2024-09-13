@@ -1,15 +1,15 @@
 <template>
 	<view>
 		<!-- #ifdef H5 -->
-		<view class="wrapper" v-if="!weChat" @click="openApp()">
+		<view class="wrapper" @click="openApp()" v-if="isShow">
 			<!-- 左侧图标 -->
 			<image class="img" :src="logo"></image>
 			<view class="open">
 				App
 			</view>
 		</view>
-
 		<!-- #endif -->
+		
 	</view>
 </template>
 
@@ -21,6 +21,7 @@
 				config, // 设置工具类
 				weChat: false, // 是否微信浏览器，该项为true时不显示 当前整个页面
 				logo: "/static/logo.png", //显示的圆形logo
+				isShow: location.pathname != '/pages/download/download'
 			};
 		},
 		mounted() {
@@ -50,31 +51,9 @@
 			 * 打开app 仅在h5生效 使用ifream唤醒app
 			 */
 			openApp() {
-				let src;
-				if (location.href) {
-					src = location.href.split("/pages")[1];
-				}
-				let t = `${config.schemeLink}pages${src}`;
-
-				try {
-					var e = navigator.userAgent.toLowerCase(),
-						n = e.match(/cpu iphone os (.*?) like mac os/);
-					if (
-						((n = null !== n ? n[1].replace(/_/g, ".") : 0), parseInt(n) >= 9)
-					) {
-						window.location.href = t;
-
-						this.downloadApp();
-					} else {
-						var r = document.createElement("iframe");
-						(r.src = t), (r.style.display = "none"), document.body.appendChild(r);
-
-						this.downloadApp();
-					}
-				} catch (e) {
-					window.location.href = t;
-					this.downloadApp();
-				}
+				uni.navigateTo({
+					url: '/pages/download/download?useH5=1'
+				})
 			},
 		},
 	};
@@ -100,7 +79,6 @@
 	}
 
 	.wrapper {
-		transform: translateX(100px);
 		transition: 0.35s;
 		align-items: center;
 		justify-content: center;

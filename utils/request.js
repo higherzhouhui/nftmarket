@@ -107,7 +107,7 @@ http.interceptors.response.use(
 			return response.data;
 		} else {
 			uni.showToast({
-				title: response.data.message,
+				title: response.data.message || response.statusCode,
 				icon: 'none',
 			})
 		}

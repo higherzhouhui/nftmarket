@@ -7,7 +7,7 @@
 		<view class="desc">{{detail.desc}}</view>
 		<view class="list">
 			<view class="list-left">
-				<view class="list-item"><text class="label">{{$t('price')}}:</text> {{detail.price}}&nbsp;USDT</view>
+				<view class="list-item"><text class="label">{{$t('price')}}:</text> {{Number(detail.price).toFixed(2)}}&nbsp;USDT</view>
 				<view class="list-item"><text class="label">{{$t('time')}}:</text> {{detail.stake_days}}&nbsp;DAYS
 				</view>
 				<view class="list-item">
@@ -21,7 +21,7 @@
 				</view>
 				<view class="list-item" v-if="isMy">
 					<text class="label">{{$t('total')}}:</text>
-					<text>{{detail.total}}</text>USDT
+					<text>{{Number(detail.total).toFixed(2)}}</text>USDT
 				</view>
 			</view>
 			<!-- <view class="list-right" v-if="!isMy">

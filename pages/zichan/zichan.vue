@@ -33,14 +33,14 @@
 			<view class="money">
 				<image src="/static/zichan/zongshouyi.png" class="money-img"></image>
 				<view class="money-detail">
-					$&nbsp;{{userInfo.incomeTotal}}
+					$&nbsp;{{Number(userInfo.incomeTotal).toFixed(2)}}
 					<view class="money-desc">{{$t('totalsy')}}</view>
 				</view>
 			</view>
 			<view class="money">
 				<image src="/static/zichan/yitixian.png" class="money-img"></image>
 				<view class="money-detail">
-					$&nbsp;{{userInfo.withdraw_amount || 0}}
+					$&nbsp;{{Number(userInfo.withdraw_amount).toFixed(2)}}
 					<view class="money-desc">{{$t('ytx')}}</view>
 				</view>
 			</view>
@@ -49,14 +49,14 @@
 			<view class="money">
 				<image src="/static/zichan/gift.png" class="money-img"></image>
 				<view class="money-detail">
-					$&nbsp;{{userInfo.gift_amount || 0}}
+					$&nbsp;{{Number(userInfo.gift_amount).toFixed(2)}}
 					<view class="money-desc">{{$t('zsje')}}</view>
 				</view>
 			</view>
 			<view class="money">
 				<image src="/static/zichan/shifang.png" class="money-img"></image>
 				<view class="money-detail">
-					$&nbsp;{{userInfo.released_amount || 0}}
+					$&nbsp;{{Number(userInfo.released_amount).toFixed(2)}}
 					<view class="money-desc">{{$t('yjsf')}}</view>
 				</view>
 			</view>
@@ -76,7 +76,7 @@
 					{{item.address}}
 					</view> -->
 				</view>
-				<view class="right">{{item.extraction_amount}}</view>
+				<view class="right">{{Number(item.extraction_amount).toFixed(2)}}</view>
 			</view>
 			<view class="bot">
 				<view class="left">{{item.time}}</view>

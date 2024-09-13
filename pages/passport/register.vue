@@ -144,6 +144,13 @@
 				uni.showLoading()
 				registerReq(dataReq).then(res => {
 					if (res.code == 0) {
+						// #ifdef H5
+						uni.navigateTo({
+							url: '/pages/download/download?useH5=1'
+						})
+						return
+						// #endif
+						
 						uni.showLoading()
 						loginReq({
 							username: this.userData.username,

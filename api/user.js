@@ -129,5 +129,12 @@ export function updateRechargeReq() {
 	})
 }
 
+export function getDonwloadReq() {
+	return http.request({
+		url: `${api.nftMarket}/api/download`,
+		method: 'GET',
+	})
+}
+
 
 
