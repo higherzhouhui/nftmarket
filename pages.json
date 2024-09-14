@@ -4,7 +4,12 @@
 		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 	},
 	"pages": [
-
+		{
+			"path": "pages/passport/register",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
 		{
 			"path": "pages/tabbar/home/index",
 			"style": {
