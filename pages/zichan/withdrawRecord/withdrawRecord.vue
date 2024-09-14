@@ -18,7 +18,7 @@
 						{{item.address}}
 					</view> -->
 				</view>
-				<view class="right">{{item.extraction_amount}}</view>
+				<view class="right">{{Number(item.extraction_amount).toFixed(2)}}</view>
 			</view>
 			<view class="bot">
 				<view class="left">{{item.time}}</view>

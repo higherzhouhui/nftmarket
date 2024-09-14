@@ -11,8 +11,8 @@
 				</picker>
 			</view>
 		</view>
-		<view class="countText">
-			<view class="text" @click="initData">
+		<view class="countText" v-if="countText">
+			<view class="text">
 			{{countText}}
 			<!-- <image src="/static/zichan/shuaxin.png" class="shuaxin"></image> -->
 			</view>
@@ -118,7 +118,7 @@
 					chain: this.chain
 				})
 				if (res.code == 0) {
-					this.end = Date.now() + 302 * 1000
+					this.end = Date.now() + 301 * 1000
 					this.timer = setInterval(() => {
 						this.countText = this.timestampToHHMMSS()
 					}, 1000)

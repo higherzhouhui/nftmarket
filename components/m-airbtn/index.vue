@@ -79,6 +79,7 @@
 	}
 
 	.wrapper {
+		transform: translateX(100px);
 		transition: 0.35s;
 		align-items: center;
 		justify-content: center;

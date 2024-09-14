@@ -1,27 +1,37 @@
 <template>
 	<view class="wrapper">
-			<!-- <u-navbar :is-back="showBack" :border-bottom="false"></u-navbar> -->
-			<view class="top-container">
+		<!-- <u-navbar :is-back="showBack" :border-bottom="false"></u-navbar> -->
+		<view class="top-container">
+			<view class="logo-wrapper">
+				<image src="/static/logo.png" class="t-logo"></image>
+			</view>
 			<view class="wrapper-title">{{$t('welecom')}}</view>
 			<!-- 帐号密码登录 -->
 			<view class="input-wrapper">
 				<view class="sign-title">{{$t('signup')}}</view>
-				<u-input :placeholder="$t('username')"
-					class="input-style" v-model="userData.username" />
-				<u-input :placeholder="$t('password')"
-					class="input-style" v-model="userData.password" type="password" />
-				<u-input :placeholder="$t('qzcsrmm')"
-					class="input-style" v-model="userData.rePassword" type="password" />
-				<u-input :placeholder="$t('inviteCode')"
-					class="input-style" v-model="userData.invite_code" />
+				<u-input :placeholder="$t('username')" class="input-style" v-model="userData.username" />
+				<u-input :placeholder="$t('password')" class="input-style" v-model="userData.password"
+					type="password" />
+				<u-input :placeholder="$t('qzcsrmm')" class="input-style" v-model="userData.rePassword"
+					type="password" />
+				<u-input :placeholder="$t('inviteCode')" class="input-style" v-model="userData.invite_code" />
 				<view :class="!enableUserBtnColor ? 'disable' : 'fetch'" @click="passwordRegister" class="btn">
 					{{$t('signup')}}
 				</view>
+
 			</view>
-				</view>
-				<view class="bot-container">
-					{{$t('already')}}<span @click="routeToSignIn">{{$t('signin')}}</span>
-				</view>
+		</view>
+		<!-- #ifdef APP-PLUS -->
+		<view class="bot-container">
+			{{$t('already')}}<span @click="routeToSignIn">{{$t('signin')}}</span>
+		</view>
+		<!-- #endif -->
+		
+		<!-- #ifdef H5 -->
+		<a class="btn bot-container" v-if="device == 'Android'" :href="url" download="HYH NFT.apk">APP {{$t('download')}}</a>
+		<a class="btn bot-container" v-else :href="url">APP {{$t('download')}}</a>
+		<!-- #endif -->
+
 	</view>
 </template>
 
@@ -30,6 +40,9 @@
 		registerReq,
 		loginReq
 	} from "@/api/login";
+	import {
+		getDonwloadReq
+	} from "@/api/user.js"
 	import storage from "@/utils/storage.js"; //缓存
 	import {
 		md5
@@ -58,6 +71,8 @@
 				enablePrivacy: false, //隐私政策
 				mobile: "", //手机号
 				code: "", //验证码
+				url: "",
+				device: ""
 			};
 		},
 		onShow() {
@@ -70,27 +85,58 @@
 		},
 
 		mounted() {
+
 		},
-		
+
 		onLoad(options) {
 			if (options.invite_code) {
 				this.userData.invite_code = options.invite_code
 			}
+			this.getDownLoadUrl()
+			
+			this.device = this.getDeviceType()
 		},
 		methods: {
+			getDeviceType() {
+				const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+				if (/android/i.test(userAgent)) {
+					return 'Android';
+				}
+
+				if (/iPad|iPhone|iPod/.test(userAgent)) {
+					return 'iOS';
+				}
+				return 'Android';
+			},
+			getDownLoadUrl() {
+				getDonwloadReq().then(res => {
+					if (res.code == 0) {
+						if (this.getDeviceType() == 'Android') {
+							this.url = res.data.android
+						} else {
+							this.url = res.data.ios
+						}
+					} else {
+						uni.showToast({
+							title: res.msg || 'Net Error',
+							icon: 'none'
+						})
+					}
+				})
+			},
 			// 跳转
 			routeToSignIn() {
 				uni.navigateTo({
 					url: '/pages/passport/login'
 				})
 			},
-			
+
 			// 跳转
 			navigateToPrivacy(val) {
 				uni.navigateTo({
 					url: "/pages/mine/help/tips?type=" + val,
 				});
-
 			},
 
 			passwordRegister() {
@@ -127,7 +173,7 @@
 					});
 					return false;
 				}
-				
+
 				if (!this.userData.invite_code) {
 					uni.showToast({
 						title: this.$i18n.t('qsryqm'),
@@ -145,12 +191,9 @@
 				registerReq(dataReq).then(res => {
 					if (res.code == 0) {
 						// #ifdef H5
-						uni.navigateTo({
-							url: '/pages/download/download?useH5=1'
-						})
 						return
 						// #endif
-						
+
 						uni.showLoading()
 						loginReq({
 							username: this.userData.username,
@@ -166,55 +209,70 @@
 						})
 					}
 				})
-				
 			},
 		},
 	};
 </script>
 
 <style lang="scss" scoped>
-@import './login.scss';
-.other-sign {
-	margin-top: 50rpx;
-	.other-sign-title {
+	@import './login.scss';
+	.logo-wrapper {
 		display: flex;
-		align-items: center;
 		justify-content: center;
-		gap: 20rpx;
-		width: fit-content;
-		width: 100%;
-		color: rgba(#fff, 0.5);
-		margin-bottom: 50rpx;
-		&::before {
-			content: '';
-			flex: 1;
-			height: 2rpx;
-			background: rgba(#fff, 0.5);
-		}
-		&::after {
-			content: '';
-			flex: 1;
-			height: 2rpx;
-			background: rgba(#fff, 0.5);
+		.t-logo {
+			width: 80px;
+			height: 80px;
 		}
 	}
-	.icon-list {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 20rpx;
-		img {
-			width: 96rpx;
-			object-fit: contain;
+	
+	.other-sign {
+		margin-top: 50rpx;
+
+		.other-sign-title {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 20rpx;
+			width: fit-content;
+			width: 100%;
+			color: rgba(#fff, 0.5);
+			margin-bottom: 50rpx;
+
+			&::before {
+				content: '';
+				flex: 1;
+				height: 2rpx;
+				background: rgba(#fff, 0.5);
+			}
+
+			&::after {
+				content: '';
+				flex: 1;
+				height: 2rpx;
+				background: rgba(#fff, 0.5);
+			}
+		}
+
+		.icon-list {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 20rpx;
+
+			img {
+				width: 96rpx;
+				object-fit: contain;
+			}
 		}
 	}
-}
+
 	.forget {
 		color: #F061FF;
 		font-size: 28rpx;
 		margin-top: 44rpx;
 		padding-left: 20rpx;
 	}
+
 	.desc,
 	.desc-light {
 		font-size: 32rpx;
@@ -236,7 +294,7 @@
 		}
 	}
 
-	
+
 	.tips {
 		font-size: 12px;
 		line-height: 20px;
@@ -247,7 +305,7 @@
 			color: $light-color;
 		}
 	}
-	
+
 	.fetch-btn {
 		width: 370rpx;
 		height: 80rpx;
@@ -285,5 +343,8 @@
 		text-align: center;
 		color: $main-color;
 		margin: 20px 0;
+	}
+	.bot-container {
+		text-decoration: none;
 	}
 </style>

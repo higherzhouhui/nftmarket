@@ -9,7 +9,7 @@
           :class="{ active: current == index }"
           v-for="(item, index) in entrySteps"
           :key="index"
-        >
+>
           {{ item.title }}
         </div>
       </div>
