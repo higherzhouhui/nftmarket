@@ -225,5 +225,6 @@
         "title" : "NFT Market",
         "template" : ""
     },
-    "locale" : "en"
+    "locale" : "en",
+    "fallbackLocale" : "zh-Hans"
 }
