@@ -37,7 +37,7 @@ Vue.use(uView);
 Vue.config.productionTip = false;
 // 国际化
 const i18nConfig = {
-	locale: uni.getStorageSync('lang') == 'zh-Hans' ? 'zh-Hans' : 'en',
+	locale: uni.getStorageSync('lang') == 'en' ? 'en' : 'zh-Hans',
 	messages
 }
 Vue.use(VueI18n)
