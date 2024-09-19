@@ -9,7 +9,7 @@
 				</view>
 			</view>
 			<view class="list" @click="handleChange('en')">
-				<view class="list-left">Englist</view>
+				<view class="list-left">English</view>
 				<view class="list-right" v-if="lang == 'en'">
 					<image src="/static/wode/select.png" class="img"></image>
 				</view>
