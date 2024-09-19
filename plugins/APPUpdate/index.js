@@ -2,7 +2,10 @@
 /**** 此文件说明请看注释 *****/
 // 可以用自己项目的请求方法
 // 请求配置说明：https://ext.dcloud.net.cn/plugin?id=822
-import { getAppVersion } from "@/api/message.js";
+import { I18nT } from "vue-i18n";
+import { getAppVersion } from "@/api/common.js";
+import Vue from 'vue';
+
 
 const platform = uni.getSystemInfoSync().platform;
 // 主颜色
@@ -25,24 +28,31 @@ export const getCurrentNo = function (callback) {
 // 发起ajax请求获取服务端版本号
 export const getServerNo = function (callback) {
   let type;
-
+  const i18n = Vue.prototype.$customI18n;
   platform == "android" ? (type = "ANDROID") : (type = "IOS");
-
+	
   getAppVersion(type).then((res) => {
-    if (res.data.success && res.data.result.downloadUrl) {
-      let response = res.data.result;
+    if (res.code == 0) {
+      let response = res.data;
       let result = {};
-      result.versionCode = response.version;
-      result.versionName = response.versionName;
-      result.versionInfo = response.content || "暂无";
-      result.forceUpdate = response.forceUpdate;
-      result.downloadUrl = response.downloadUrl;
+	  result.versionName = 'HYH NFT'
+	  result.versionInfo = response.content || i18n.t('xbbdesc');
+	  result.forceUpdate = false;
+	  
+	  if (platform == 'ios') {
+		  result.versionCode = response.ios_version;
+		  result.downloadUrl = response.ios;
+	  } else {
+		  result.versionCode = response.android_version;
+		  result.downloadUrl = response.android;
+	  }
       callback && callback(result);
     }
   });
 };
 // 从服务器下载应用资源包（wgt文件）
 export const getDownload = function (data) {
+	const i18n = Vue.prototype.$customI18n;
   let popupData = {
     progress: true,
     buttonNum: 2,
@@ -65,7 +75,7 @@ export const getDownload = function (data) {
           if (status == 200) {
             res.change({
               progressValue: 100,
-              progressTip: "正在安装文件...",
+              progressTip: i18n.t("zzazwj"),
               progress: true,
               buttonNum: 0,
             });
@@ -74,7 +84,7 @@ export const getDownload = function (data) {
               {},
               function () {
                 res.change({
-                  contentText: "应用资源更新完成！",
+                  contentText: i18n.t('yyzy'),
                   buttonNum: 1,
                   progress: false,
                 });
@@ -82,13 +92,13 @@ export const getDownload = function (data) {
               function (e) {
                 res.cancel();
                 plus.nativeUI.alert(
-                  "安装文件失败[" + e.code + "]：" + e.message
+                  `${i18n.t('azsb')}[" + e.code + "]：` + e.message
                 );
               }
             );
           } else {
             res.change({
-              contentText: "文件下载失败...",
+              contentText: i18n.t('xzsb'),
               buttonNum: 1,
               progress: false,
             });
@@ -101,14 +111,14 @@ export const getDownload = function (data) {
           case 1: // 开始
             res.change({
               progressValue: 0,
-              progressTip: "准备下载...",
+              progressTip: i18n.t('zbxz'),
               progress: true,
             });
             break;
           case 2: // 已连接到服务器
             res.change({
               progressValue: 0,
-              progressTip: "开始下载...",
+              progressTip: i18n.t('ksxz'),
               progress: true,
             });
             break;
@@ -120,7 +130,7 @@ export const getDownload = function (data) {
               lastProgressValue = progress;
               res.change({
                 progressValue: progress,
-                progressTip: "已下载" + progress + "%",
+                progressTip: i18n.t('yixiaz') + ` ${progress}` + "%",
                 progress: true,
               });
             }
@@ -132,7 +142,7 @@ export const getDownload = function (data) {
       // 取消下载
       dtask && dtask.abort();
       uni.showToast({
-        title: "已取消下载",
+        title: i18n.t('qxxz'),
         icon: "none",
       });
     },
@@ -146,7 +156,6 @@ export const getDownload = function (data) {
 function drawtext(text, maxWidth) {
   let textArr = text.split("");
   let len = textArr.length;
-
   // 上个节点
   let previousNode = 0;
   // 记录节点宽度
@@ -159,7 +168,7 @@ function drawtext(text, maxWidth) {
   // 汉字宽度
   let chineseWidth = 14;
   // otherFont宽度
-  let otherWidth = 7;
+  let otherWidth = 6;
   for (let i = 0; i < len; i++) {
     if (/[\u4e00-\u9fa5]|[\uFE30-\uFFA0]/g.test(textArr[i])) {
       if (letterWidth > 0) {
@@ -206,7 +215,7 @@ function drawtext(text, maxWidth) {
         letterWidth = 0;
       } else if (/[a-zA-Z0-9]/g.test(textArr[i])) {
         letterWidth += 1;
-        if (nodeWidth + letterWidth * otherWidth > maxWidth) {
+        if (nodeWidth > maxWidth) {
           rowText.push({
             type: "text",
             content: text.substring(previousNode, i + 1 - letterWidth),
@@ -240,6 +249,7 @@ function drawtext(text, maxWidth) {
 }
 // 是否更新弹窗
 function updatePopup(data, callback) {
+  const i18n = Vue.prototype.$customI18n;
   // 弹窗遮罩层
   let maskLayer = new plus.nativeObj.View("maskLayer", {
     //先创建遮罩层
@@ -288,7 +298,7 @@ function updatePopup(data, callback) {
     {
       tag: "font",
       id: "welcome",
-      text: "欢迎体验",
+      text: i18n.t('hyty'),
       textStyles: {
         size: "16px",
         color: "#fff",
@@ -307,7 +317,7 @@ function updatePopup(data, callback) {
   popupViewContentList.push({
     tag: "font",
     id: "content-title",
-    text: "新版本特性：",
+    text: i18n.t('xinbb'),
     textStyles: {
       size: "20px",
       lineSpacing: "50%",
@@ -417,7 +427,7 @@ function updatePopup(data, callback) {
   popupViewContentList.push({
     tag: "font",
     id: "confirmText",
-    text: "立即更新",
+    text: i18n.t('ljgx'),
     textStyles: {
       size: "18px",
       color: "#fff",
@@ -484,6 +494,7 @@ function updatePopup(data, callback) {
 }
 // 文件下载的弹窗绘图
 function downloadPopupDrawing(data) {
+  const i18n = Vue.prototype.$customI18n;
   // 以下为计算菜单的nview绘制布局，为固定算法，使用者无关关心
   const screenWidth = plus.screen.resolutionWidth;
   const screenHeight = plus.screen.resolutionHeight;
@@ -495,8 +506,8 @@ function downloadPopupDrawing(data) {
   const viewContentWidth = popupViewWidth - viewContentPadding * 2;
   // 弹窗容器高度
   let popupViewHeight = viewContentPadding * 3 + 60;
-  let progressTip = data.progressTip || "准备下载...";
-  let contentText = data.contentText || "正在为您更新，请耐心等待";
+  let progressTip = data.progressTip || i18n.t('zbxz');
+  let contentText = data.contentText || i18n.t('zzwngx');
   let elementList = [
     {
       tag: "rect", //背景色
@@ -508,7 +519,7 @@ function downloadPopupDrawing(data) {
     {
       tag: "font",
       id: "title",
-      text: "升级APP",
+      text: i18n.t('sjapp'),
       textStyles: {
         size: "16px",
         color: "#333",
@@ -656,7 +667,7 @@ function downloadPopupDrawing(data) {
       {
         tag: "font",
         id: "confirmText",
-        text: "关闭",
+        text: i18n.t('close'),
         textStyles: {
           size: "14px",
           color: "#FFF",

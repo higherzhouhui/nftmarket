@@ -54,6 +54,8 @@ Vue.prototype.$mainColor = config.mainColor;
 Vue.prototype.$lightColor = config.lightColor;
 // 辅助高亮颜色
 Vue.prototype.$aiderLightColor = config.aiderLightColor;
+Vue.prototype.$customI18n = i18n;
+
 
 
 App.mpType = "app";

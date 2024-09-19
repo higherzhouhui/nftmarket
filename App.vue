@@ -11,6 +11,8 @@
 	import {
 		mapMutations
 	} from "vuex";
+	
+	import {getAppVersion} from "@/api/common.js"
 
 
 
@@ -66,8 +68,9 @@
 		},
 		onLaunch: function() {
 			// #ifdef APP-PLUS
+			// this.checkUpdate();
 			this.checkArguments(); // 检测启动参数
-			// APPUpdate();
+			APPUpdate();
 
 			// 重点是以下： 一定要监听后台恢复 ！一定要
 			plus.globalEvent.addEventListener("newintent", (e) => {
@@ -191,6 +194,91 @@
 				});
 				// #endif
 			},
+			
+			checkUpdate() {
+			    plus.runtime.getProperty(plus.runtime.appid, async (widgetInfo) => {
+			        console.log("当前版本信息：",widgetInfo.version);
+			        getAppVersion().then(result => {
+			            if (!result.code) {
+			                let platform = uni.getSystemInfoSync().platform
+			                if (platform === 'ios') {
+			                    if (result.data.ios_version !== widgetInfo.version) {
+			                        uni.showModal({
+			                            cancelText: "Skip",
+			                            confirmText: "Update",
+			                            title: "Update available",
+			                            content: "Please update to the latest version for improved features and performance.",
+			                            success: (res) => {
+			                                if (res.confirm) {
+			                                    plus.runtime.openURL(
+			                                        result.data.ios_ipa_url, () => {
+			                                            console.log('打开地址失败', result.data.ios_ipa_url)
+			                                        }
+			                                    )
+			                                }
+			                            }
+			                        })
+			                    }
+			                } else if (platform === 'android') {
+			                    if (result.data.android_version !== widgetInfo.version) {
+			                        // 版本不一致
+			                        console.log('版本不一致!', result.data.android_version, widgetInfo.version)
+			                        console.log('版本不一致!', JSON.stringify(result))
+			                        uni.showModal({
+			                            cancelText: "Skip",      // 下次更新
+			                            confirmText: "Update",   // 立即更新
+			                            title: "Update available",  // 发现新版本
+			                            content: "Please update to the latest version for improved features and performance.",    // 当前应用有新的版本，是否立即更新?
+			                            success: (res) => {
+			                                if (res.confirm) {
+			                                    console.log("开始下载:" + result.data.android);
+			                                    let downloadTask = uni.downloadFile({
+			                                        url: result.data.android,
+			                                        success: (downloadResult) => {
+			                                            if (downloadResult.statusCode === 200) {
+			                                                plus.runtime.install(
+			                                                    downloadResult.tempFilePath, {
+			                                                        force: false
+			                                                    }, () => {
+			                                                        console.log("安装成功");
+			                                                        plus.runtime.restart();
+			                                                    }, () => {
+			                                                        uni.showToast({
+			                                                            title: "Installation failed, please try manually downloading and installing",    // 安装失败，请尝试手动下载安装
+			                                                            icon: "fail"
+			                                                        });
+			                                                    }
+			                                                );
+			                                            }
+			                                        },
+			                                        fail: (error) => {
+			                                            console.log("下载失败~~~~~~~~~~");
+			                                            console.log(error);
+			                                        },
+			                                        complete: () => {
+			                                            uni.hideLoading();
+			                                        }
+			                                    });
+			                                    let lastProcess = 0;
+			                                    uni.hideLoading();
+			                                    var w = plus.nativeUI.showWaiting("Preparing to download ..."); // 准备下载...
+			                                    downloadTask.onProgressUpdate((res) => {
+			                                        console.log("lastProcess:" + res.progress);
+			                                        if (lastProcess !== res.progress) {
+			                                            lastProcess = res.progress;
+			                                            w.setTitle("Download progress" + res.progress + "%");   // 下载进度
+			                                        }
+			                                    });
+			                                }
+			                            }
+			                        })
+			                    }
+			                }
+			            }
+			        })
+			    });
+			}
+		
 		},
 	};
 </script>

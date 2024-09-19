@@ -25,6 +25,13 @@ export function getIMDetail() {
   });
 }
 
+export function getAppVersion() {
+	return http.request({
+		url: `${api.nftMarket}/api/download`,
+		method: 'GET',
+	})
+}
+
 /**
  * 文件上传地址
  * @type {string}
